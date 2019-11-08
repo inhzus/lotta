@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.14)
+project(libnet)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
+include_directories(include)
+add_subdirectory(external)
+include_directories(external/spdlog/include)
+add_subdirectory(src)
+add_subdirectory(tests)
