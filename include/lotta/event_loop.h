@@ -2,24 +2,38 @@
 // Created by suun on 11/7/19.
 //
 
-#ifndef LIBNET_EVENT_LOOP_H
-#define LIBNET_EVENT_LOOP_H
+#ifndef LOTTA_EVENT_LOOP_H
+#define LOTTA_EVENT_LOOP_H
 #include "lotta/utils/noncopyable.h"
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include <atomic>
+#include <cstddef> // size_t
 #include <memory>
-#include <thread>
+#include <vector>
 
 namespace lotta {
-class EventLoop : noncopyable {
+
+class Channel;
+class Poller;
+
+class EventLoop : utils::noncopyable {
  public:
   EventLoop();
   ~EventLoop();
+  void run();
+  void quit();
+
+  void updateChannel(Channel *);
+  void assertThreadLoop() const;
  private:
+  [[nodiscard]] bool isThreadLoop() const;
+
   bool looping_;
-  const std::thread::id threadId_;
-  std::shared_ptr<spdlog::logger> logger_;
+  std::atomic_bool quit_;
+  const size_t threadId_;
+  std::vector<Channel *> activeChannels_;
+  std::unique_ptr<Poller> poller_;
 };
+
 }
 
-#endif //LIBNET_EVENT_LOOP_H
+#endif //LOTTA_EVENT_LOOP_H

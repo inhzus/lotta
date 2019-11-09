@@ -4,7 +4,12 @@ if (NOT TARGET spdlog)
 endif ()
 
 add_library(net_src
+        channel.cc
         event_loop.cc
-        utils/current_thread.cc)
+        poller.cc
+        poll_poller.cc
+        utils/logging.cc
+        utils/this_thread.cc
+        )
 target_link_libraries(net_src
         PRIVATE spdlog::spdlog)

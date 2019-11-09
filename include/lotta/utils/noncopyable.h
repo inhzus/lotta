@@ -2,10 +2,10 @@
 // Created by suun on 11/7/19.
 //
 
-#ifndef LIBNET_NONCOPYABLE_H
-#define LIBNET_NONCOPYABLE_H
+#ifndef LOTTA_UTILS_NONCOPYABLE_H
+#define LOTTA_UTILS_NONCOPYABLE_H
 
-namespace lotta {
+namespace lotta::utils {
 
 class noncopyable {
  public:
@@ -18,4 +18,4 @@ class noncopyable {
 
 }
 
-#endif //LIBNET_NONCOPYABLE_H
+#endif //LOTTA_UTILS_NONCOPYABLE_H
