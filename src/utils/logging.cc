@@ -6,15 +6,14 @@
 
 namespace lotta {
 
-std::shared_ptr<spdlog::logger> logger;
+spdlog::logger *logger() {
+  static std::shared_ptr<spdlog::logger> staticLogger = []() {
+    auto innerLogger = spdlog::stdout_color_mt("lotta");
+    innerLogger->set_level(spdlog::level::trace);
+    innerLogger->info("logger initializing");
+    return innerLogger;
+  }();
+  return staticLogger.get();
+}
 
-class LoggerInitializer {
- public:
-  LoggerInitializer() {
-    logger = spdlog::stdout_color_mt("lotta");
-    logger->set_level(spdlog::level::trace);
-  }
-};
-
-static LoggerInitializer initializer; // NOLINT(cert-err58-cpp)
 }

@@ -26,7 +26,7 @@ Channel::Channel(EventLoop *loop, int fd)
 
 void Channel::handleEvent() {
   if (revents_ & POLLNVAL) { // NOLINT(hicpp-signed-bitwise)
-    logger->warn("invalid polling request");
+    logger()->warn("invalid polling request");
   }
   if (revents_ & kErrorPollEvent && errorCallback_) {
     errorCallback_();
@@ -76,7 +76,7 @@ unsigned Channel::getEvents() const {
   return events_;
 }
 void Channel::setRevents(unsigned revents) {
-  revents_ = events_;
+  revents_ = revents;
 }
 int Channel::getIdxPoll() const {
   return idxPoll_;

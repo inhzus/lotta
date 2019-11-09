@@ -10,7 +10,9 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace lotta {
-extern std::shared_ptr<spdlog::logger> logger;
+
+spdlog::logger *logger();
+
 }
 
 #endif //LOTTA_UTILS_LOGGING_H

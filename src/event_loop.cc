@@ -18,11 +18,11 @@ EventLoop::EventLoop() :
     quit_(false),
     threadId_(utils::this_thread::id()),
     poller_(Poller::get(this)) {
-  logger->trace("EventLoop {} created in thread {:x}",
+  logger()->trace("EventLoop {} created in thread {:x}",
                 static_cast<void *>(this),
                 threadId_);
   if (t_eventLoopThisThread) {
-    logger->trace("another EventLoop {} exists",
+    logger()->trace("another EventLoop {} exists",
                   (void *) t_eventLoopThisThread);
   } else {
     t_eventLoopThisThread = this;
@@ -37,14 +37,14 @@ void EventLoop::run() {
   assertThreadLoop();
   looping_ = true;
   quit_ = false;
-  logger->trace("EventLoop {} looping", static_cast<void *>(this));
+  logger()->trace("EventLoop {} looping", static_cast<void *>(this));
   while (!quit_) {
     poller_->poll(kPollTimeout, activeChannels_);
     for (auto channel : activeChannels_) {
       channel->handleEvent();
     }
   }
-  logger->trace("EventLoop {} stops", static_cast<void *>(this));
+  logger()->trace("EventLoop {} stops", static_cast<void *>(this));
   looping_ = false;
 }
 void EventLoop::quit() {
@@ -57,7 +57,7 @@ void EventLoop::updateChannel(Channel *channel) {
 
 void EventLoop::assertThreadLoop() const {
   if (!isThreadLoop()) {
-    logger->trace("this is not specified run");
+    logger()->trace("this is not specified run");
   }
 }
 bool EventLoop::isThreadLoop() const {
