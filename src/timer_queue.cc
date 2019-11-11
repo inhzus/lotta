@@ -26,13 +26,13 @@ void readTimerFd(int fd) {
 }
 
 void resetTimerFd(int fd, TimerQueue::time_point point) {
-  auto duration = std::chrono::steady_clock::now() - point;
-  auto milliseconds = std::chrono::duration_cast<
-      std::chrono::milliseconds>(duration).count();
+  auto duration = point - std::chrono::steady_clock::now();
+  auto nanoseconds = std::chrono::duration_cast<
+      std::chrono::nanoseconds>(duration).count();
   itimerspec spec{
       {},
-      {milliseconds / 1000,
-       milliseconds % 1000}};
+      {nanoseconds / 1'000'000'000,
+       nanoseconds % 1'000'000'000}};
   if (::timerfd_settime(fd, 0, &spec, nullptr)) {
     SPDLOG_CRITICAL("fail to set timer fd");
   }
