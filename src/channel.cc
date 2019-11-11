@@ -69,6 +69,11 @@ void Channel::disableWriting() {
   update();
 }
 
+void Channel::disableEvents() {
+  events_ = kEmptyEvent;
+  update();
+}
+
 int Channel::getFd() const {
   return fd_;
 }

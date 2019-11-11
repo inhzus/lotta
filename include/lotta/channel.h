@@ -28,6 +28,8 @@ class Channel : utils::noncopyable {
   void disableReading();
   void enableWriting();
   void disableWriting();
+  void disableEvents();
+
   void setIdxPoll(int);
   void setRevents(unsigned);
 

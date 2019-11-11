@@ -7,7 +7,9 @@
 #include "lotta/utils/noncopyable.h"
 #include <atomic>
 #include <cstddef> // size_t
+#include <functional>
 #include <memory>
+#include <mutex>
 #include <vector>
 
 namespace lotta {
@@ -17,21 +19,40 @@ class Poller;
 
 class EventLoop : utils::noncopyable {
  public:
+  using Function = std::function<void()>;
+
   EventLoop();
   ~EventLoop();
-  void run();
+  void loop();
   void quit();
 
   void updateChannel(Channel *);
-  void assertThreadLoop() const;
+
+  void exec(Function);
+  void pushQueue(Function);
+  void doFuncQueue();
+
+  void assertTheSameThread() const;
  private:
-  [[nodiscard]] bool isThreadLoop() const;
+  [[nodiscard]] bool isTheSameThread() const;
+
+  void wakeup();
+  void handleWakeup();
 
   bool looping_;
   std::atomic_bool quit_;
   const size_t threadId_;
   std::vector<Channel *> activeChannels_;
   std::unique_ptr<Poller> poller_;
+
+  // wakeup event
+  int wakeupFd_;
+  std::unique_ptr<Channel> wakeChannel_;
+
+  // pending queue
+  std::mutex funcQueueMtx_;
+  std::atomic_bool doingFuncQueue_;
+  std::vector<Function> funcQueue_;
 };
 
 }

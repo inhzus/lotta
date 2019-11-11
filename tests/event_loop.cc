@@ -9,7 +9,7 @@
 
 TEST(EventLoop, constructor) {
   lotta::EventLoop loop;
-//  loop.run();
+//  loop.loop();
 }
 
 TEST(EventLoop, timerChannel) {
@@ -26,6 +26,6 @@ TEST(EventLoop, timerChannel) {
   bzero(&duration, sizeof(duration));
   duration.it_value.tv_sec = 5;
   timerfd_settime(timerFd, 0, &duration, nullptr);
-  loop.run();
+  loop.loop();
   close(timerFd);
 }

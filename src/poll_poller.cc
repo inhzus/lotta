@@ -35,7 +35,7 @@ void PollPoller::poll(
 }
 
 void PollPoller::updateChannel(Channel *channel) {
-  loop_->assertThreadLoop();
+  loop_->assertTheSameThread();
   logger()->trace("fd: {}, events: {}", channel->getFd(), channel->getEvents());
   if (channel->getIdxPoll() < 0) {
     assert(channels_.find(channel->getFd()) == channels_.end());
