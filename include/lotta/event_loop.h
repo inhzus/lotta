@@ -16,6 +16,8 @@ namespace lotta {
 
 class Channel;
 class Poller;
+class Timer;
+class TimerQueue;
 
 class EventLoop : utils::noncopyable {
  public:
@@ -31,6 +33,9 @@ class EventLoop : utils::noncopyable {
   void exec(Function);
   void pushQueue(Function);
   void doFuncQueue();
+
+  std::weak_ptr<Timer> runAfter(Function, double interval);
+
 
   void assertTheSameThread() const;
  private:
@@ -53,6 +58,9 @@ class EventLoop : utils::noncopyable {
   std::mutex funcQueueMtx_;
   std::atomic_bool doingFuncQueue_;
   std::vector<Function> funcQueue_;
+
+  // timer queue
+  std::unique_ptr<TimerQueue> timerQueue_;
 };
 
 }

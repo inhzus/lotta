@@ -5,13 +5,9 @@
 #ifndef LOTTA_UTILS_LOGGING_H
 #define LOTTA_UTILS_LOGGING_H
 
-#include "lotta/utils/singleton.h"
+#define SPDLOG_ACTIVE_LEVEL 0
 #include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
-
-namespace lotta {
-
-spdlog::logger *logger();
+namespace lotta::utils::logging {
 
 }
 

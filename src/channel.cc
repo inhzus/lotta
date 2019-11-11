@@ -26,7 +26,7 @@ Channel::Channel(EventLoop *loop, int fd)
 
 void Channel::handleEvent() {
   if (revents_ & POLLNVAL) { // NOLINT(hicpp-signed-bitwise)
-    logger()->warn("invalid polling request");
+    SPDLOG_WARN("invalid polling request");
   }
   if (revents_ & kErrorPollEvent && errorCallback_) {
     errorCallback_();

@@ -16,9 +16,9 @@ void PollPoller::poll(
     int timeout, std::vector<Channel *> &activeChannels) {
   int num = ::poll(&*pollFds_.begin(), pollFds_.size(), timeout);
   if (num < 0) {
-    logger()->error("poll returns negative number");
+    SPDLOG_ERROR("poll returns negative number");
   } else if (num == 0) {
-    logger()->trace("poll timeout");
+    SPDLOG_TRACE("poll timeout");
   } else {
     for (const pollfd &pfd : pollFds_) {
       if (pfd.revents != 0) {
@@ -36,7 +36,7 @@ void PollPoller::poll(
 
 void PollPoller::updateChannel(Channel *channel) {
   loop_->assertTheSameThread();
-  logger()->trace("fd: {}, events: {}", channel->getFd(), channel->getEvents());
+  SPDLOG_TRACE("fd: {}, events: {}", channel->getFd(), channel->getEvents());
   if (channel->getIdxPoll() < 0) {
     assert(channels_.find(channel->getFd()) == channels_.end());
     pollfd pfd{

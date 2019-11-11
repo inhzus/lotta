@@ -14,7 +14,7 @@ namespace lotta {
 int createTimerFd() {
   int fd = ::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
   if (fd < 0) {
-    logger()->critical("timer fd fails to initialize");
+    SPDLOG_CRITICAL("timer fd fails to initialize");
   }
   return fd;
 }
@@ -22,7 +22,7 @@ int createTimerFd() {
 void readTimerFd(int fd) {
   int64_t tmp;
   ssize_t n = socket::read(fd, &tmp, sizeof(tmp));
-  logger()->trace("read timer fd {} events", tmp);
+  SPDLOG_TRACE("read timer fd {} events", tmp);
 }
 
 void resetTimerFd(int fd, TimerQueue::time_point point) {
@@ -34,7 +34,7 @@ void resetTimerFd(int fd, TimerQueue::time_point point) {
       {milliseconds / 1000,
        milliseconds % 1000}};
   if (::timerfd_settime(fd, 0, &spec, nullptr)) {
-    logger()->critical("fail to set timer fd");
+    SPDLOG_CRITICAL("fail to set timer fd");
   }
 }
 

@@ -17,7 +17,7 @@ TEST(EventLoop, timerChannel) {
   int timerFd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
   lotta::Channel channel(&loop, timerFd);
   channel.setReadCallback([l = &loop]() {
-    lotta::logger()->warn("timeout");
+    SPDLOG_WARN("timeout"); // NOLINT(bugprone-lambda-function-name)
     l->quit();
   });
   channel.enableReading();

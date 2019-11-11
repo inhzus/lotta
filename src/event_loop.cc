@@ -6,6 +6,8 @@
 #include "lotta/channel.h"
 #include "lotta/poller.h"
 #include "lotta/socket.h"
+#include "lotta/timer.h"
+#include "lotta/timer_queue.h"
 #include "lotta/utils/this_thread.h"
 #include "lotta/utils/logging.h"
 #include <sys/eventfd.h>
@@ -18,7 +20,7 @@ const int kPollTimeout = 5 * 1000;
 int createEventFd() {
   int fd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
   if (fd < 0) {
-    logger()->critical("event fd fails to initialize");
+    SPDLOG_CRITICAL("event fd fails to initialize");
   }
   return fd;
 }
@@ -30,13 +32,12 @@ EventLoop::EventLoop() :
     poller_(Poller::get(this)),
     wakeupFd_(createEventFd()),
     wakeChannel_(std::make_unique<Channel>(this, wakeupFd_)),
-    doingFuncQueue_(false) {
-  logger()->trace("EventLoop {} created in thread {:x}",
-                  static_cast<void *>(this),
-                  threadId_);
+    doingFuncQueue_(false),
+    timerQueue_(std::make_unique<TimerQueue>(this)) {
+  SPDLOG_TRACE("EventLoop {} created in thread {:x}",
+               static_cast<void *>(this), threadId_);
   if (t_eventLoopThisThread) {
-    logger()->trace("another EventLoop {} exists",
-                    (void *) t_eventLoopThisThread);
+    SPDLOG_TRACE("another EventLoop {} exists", (void *) t_eventLoopThisThread);
   } else {
     t_eventLoopThisThread = this;
   }
@@ -54,7 +55,7 @@ void EventLoop::loop() {
   assertTheSameThread();
   looping_ = true;
   quit_ = false;
-  logger()->trace("EventLoop {} looping", static_cast<void *>(this));
+  SPDLOG_TRACE("EventLoop {} looping", static_cast<void *>(this));
   while (!quit_) {
     activeChannels_.clear();
     poller_->poll(kPollTimeout, activeChannels_);
@@ -63,7 +64,7 @@ void EventLoop::loop() {
     }
     doFuncQueue();
   }
-  logger()->trace("EventLoop {} stops", static_cast<void *>(this));
+  SPDLOG_TRACE("EventLoop {} stops", static_cast<void *>(this));
   looping_ = false;
 }
 void EventLoop::quit() {
@@ -109,20 +110,29 @@ void EventLoop::doFuncQueue() {
   doingFuncQueue_ = false;
 }
 
+std::weak_ptr<Timer> EventLoop::runAfter(
+    EventLoop::Function func, double interval) {
+  Timer::time_point point =
+      std::chrono::time_point_cast<std::chrono::steady_clock::duration>(
+          std::chrono::steady_clock::now() +
+              std::chrono::duration<double>(interval));
+  return timerQueue_->addTimer(std::move(func), point, 0);
+}
+
 void EventLoop::assertTheSameThread() const {
   if (!isTheSameThread()) {
-    logger()->critical("not in the same thread of EventLoop");
+    SPDLOG_CRITICAL("not in the same thread of EventLoop");
   }
 }
 bool EventLoop::isTheSameThread() const {
-  return t_eventLoopThisThread == this;
+  return threadId_ == utils::this_thread::id();
 }
 
 void EventLoop::wakeup() {
   int tmp = 1;
   auto n = socket::write(wakeupFd_, &tmp, sizeof(tmp));
   if (n != sizeof(tmp)) {
-    logger()->error("fail to wakeup");
+    SPDLOG_ERROR("fail to wakeup");
   }
 }
 
@@ -130,7 +140,7 @@ void EventLoop::handleWakeup() {
   int tmp;
   auto n = socket::read(wakeupFd_, &tmp, sizeof(tmp));
   if (n != sizeof(n)) {
-    logger()->error("fail to handle wakeup");
+    SPDLOG_ERROR("fail to handle wakeup");
   }
 }
 
