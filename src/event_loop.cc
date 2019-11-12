@@ -34,7 +34,7 @@ EventLoop::EventLoop() :
     wakeChannel_(std::make_unique<Channel>(this, wakeupFd_)),
     doingFuncQueue_(false),
     timerQueue_(std::make_unique<TimerQueue>(this)) {
-  SPDLOG_TRACE("EventLoop {} created in thread {:x}",
+  SPDLOG_TRACE("EventLoop {} created in thread {}",
                static_cast<void *>(this), threadId_);
   if (t_eventLoopThisThread) {
     SPDLOG_TRACE("another EventLoop {} exists", (void *) t_eventLoopThisThread);
