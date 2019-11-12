@@ -7,6 +7,7 @@
 
 #include "lotta/utils/noncopyable.h"
 #include "lotta/event_loop.h"
+#include "lotta/timer.h"
 #include <atomic>
 #include <chrono>
 #include <functional>
@@ -15,13 +16,14 @@
 
 namespace lotta {
 
-class Timer;
 class Channel;
 
 class TimerQueue : utils::noncopyable {
  public:
-  using time_point = std::chrono::steady_clock::time_point;
-  using Callback = std::function<void()>;
+  using clock = Timer::clock;
+  using duration = Timer::duration;
+  using time_point = Timer::time_point;
+  using Callback = Timer::Callback;
   using TimerEntry = std::pair<time_point, std::shared_ptr<Timer>>;
   using TimerMultiMap = std::multimap<time_point, std::shared_ptr<Timer>>;
 
@@ -37,9 +39,9 @@ class TimerQueue : utils::noncopyable {
   std::vector<TimerEntry> expireTimers(time_point now);
   void resetTimers(time_point now, const std::vector<TimerEntry> &expired);
 
-  void addTask(std::shared_ptr<Timer>);
+  void addTask(const std::shared_ptr<Timer> &timer);
   void cancelTask(const std::shared_ptr<Timer> &timer);
-  bool pushTimerToMap(std::shared_ptr<Timer>);
+  bool pushTimerToMap(const std::shared_ptr<Timer> &timer);
 
   // timer event
   int fd_;

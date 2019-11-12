@@ -112,11 +112,20 @@ void EventLoop::doFuncQueue() {
 
 std::weak_ptr<Timer> EventLoop::runAfter(
     EventLoop::Function func, double interval) {
-  Timer::time_point point =
-      std::chrono::time_point_cast<std::chrono::steady_clock::duration>(
-          std::chrono::steady_clock::now() +
-              std::chrono::duration<double>(interval));
+  Timer::time_point point = std::chrono::time_point_cast<Timer::duration>(
+      Timer::clock::now() + std::chrono::duration<double>(interval));
   return timerQueue_->addTimer(std::move(func), point, 0);
+}
+
+std::weak_ptr<Timer> EventLoop::runEvery(
+    EventLoop::Function func, double interval) {
+  Timer::time_point point = std::chrono::time_point_cast<Timer::duration>(
+      Timer::clock::now() + std::chrono::duration<double>(interval));
+  return timerQueue_->addTimer(std::move(func), point, interval);
+}
+
+void EventLoop::cancel(const std::weak_ptr<Timer> &timer) {
+  timerQueue_->cancel(timer);
 }
 
 void EventLoop::assertTheSameThread() const {

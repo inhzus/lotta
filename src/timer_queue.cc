@@ -5,7 +5,6 @@
 #include "lotta/timer_queue.h"
 #include "lotta/channel.h"
 #include "lotta/socket.h"
-#include "lotta/timer.h"
 #include "lotta/utils/logging.h"
 #include <sys/timerfd.h>
 
@@ -26,7 +25,7 @@ void readTimerFd(int fd) {
 }
 
 void resetTimerFd(int fd, TimerQueue::time_point point) {
-  auto duration = point - std::chrono::steady_clock::now();
+  auto duration = point - TimerQueue::clock::now();
   auto nanoseconds = std::chrono::duration_cast<
       std::chrono::nanoseconds>(duration).count();
   itimerspec spec{
@@ -71,7 +70,7 @@ std::weak_ptr<Timer> TimerQueue::addTimer(
     double interval) {
   std::shared_ptr<Timer> timer = std::make_shared<Timer>(
       std::move(callback), when, interval);
-  loop_->exec(std::bind(&TimerQueue::addTask, this, std::move(timer)));
+  loop_->exec(std::bind(&TimerQueue::addTask, this, timer));
   return timer;
 }
 
@@ -83,7 +82,7 @@ void TimerQueue::cancel(const std::weak_ptr<Timer> &weakTimer) {
 
 void TimerQueue::handleTimer() {
   loop_->assertTheSameThread();
-  time_point now = std::chrono::steady_clock::now();
+  time_point now = clock::now();
   readTimerFd(fd_);
   auto expired = expireTimers(now);
 
@@ -121,10 +120,10 @@ void TimerQueue::resetTimers(
   }
 }
 
-void TimerQueue::addTask(std::shared_ptr<Timer> timer) {
+void TimerQueue::addTask(const std::shared_ptr<Timer> &timer) {
   loop_->assertTheSameThread();
   time_point when = timer->getWhen();
-  bool pushedToFirst = pushTimerToMap(std::move(timer));
+  bool pushedToFirst = pushTimerToMap(timer);
   if (pushedToFirst) {
     resetTimerFd(fd_, when);
   }
@@ -141,10 +140,10 @@ void TimerQueue::cancelTask(const std::shared_ptr<Timer> &timer) {
   }
 }
 
-bool TimerQueue::pushTimerToMap(std::shared_ptr<Timer> timer) {
+bool TimerQueue::pushTimerToMap(const std::shared_ptr<Timer> &timer) {
   bool pushedToFirst = (
       timers_.empty() || timer->getWhen() < timers_.begin()->first);
-  timers_.insert(TimerEntry(timer->getWhen(), std::move(timer)));
+  timers_.insert(TimerEntry(timer->getWhen(), timer));
   return pushedToFirst;
 }
 

@@ -35,7 +35,8 @@ class EventLoop : utils::noncopyable {
   void doFuncQueue();
 
   std::weak_ptr<Timer> runAfter(Function, double interval);
-
+  std::weak_ptr<Timer> runEvery(Function, double interval);
+  void cancel(const std::weak_ptr<Timer> &timer);
 
   void assertTheSameThread() const;
  private:

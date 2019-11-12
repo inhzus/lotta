@@ -22,9 +22,8 @@ TEST(EventLoop, timerChannel) {
   });
   channel.enableReading();
 
-  itimerspec duration;
-  bzero(&duration, sizeof(duration));
-  duration.it_value.tv_sec = 5;
+  itimerspec duration{{}, {}};
+  duration.it_value.tv_sec = 1;
   timerfd_settime(timerFd, 0, &duration, nullptr);
   loop.loop();
   close(timerFd);

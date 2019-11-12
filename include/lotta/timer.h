@@ -14,8 +14,10 @@ namespace lotta {
 
 class Timer {
  public:
+  using clock = std::chrono::steady_clock;
+  using duration = clock::duration;
+  using time_point = clock::time_point;
   using Callback = std::function<void()>;
-  using time_point = std::chrono::steady_clock::time_point;
 
   Timer(Callback callback, time_point when, double interval) :
       callback_(std::move(callback)), when_(when), interval_(interval),
