@@ -47,9 +47,8 @@ findTimer(TimerQueue::TimerMultiMap &timers,
       [&entry = entry](const TimerQueue::TimerEntry &item) -> bool {
         return entry.second == item.second;
       });
-  bool isFound = (range.second == it);
-  return std::pair<TimerQueue::TimerMultiMap::iterator, bool>(
-      it, isFound);
+  bool isFound = (range.second != it);
+  return std::pair<TimerQueue::TimerMultiMap::iterator, bool>(it, isFound);
 }
 
 TimerQueue::TimerQueue(lotta::EventLoop *loop) :
