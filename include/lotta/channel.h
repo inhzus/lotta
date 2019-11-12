@@ -38,6 +38,9 @@ class Channel : utils::noncopyable {
   [[nodiscard]] int getIdxPoll() const;
 
   [[nodiscard]] bool isEmptyEvent() const;
+
+  [[nodiscard]] std::string eventsString() const;
+  [[nodiscard]] std::string reventsString() const;
  private:
   EventLoop *loop_;
   const int fd_;

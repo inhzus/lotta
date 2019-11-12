@@ -5,6 +5,7 @@
 #include "lotta/channel.h"
 #include "lotta/event_loop.h"
 #include "lotta/utils/logging.h"
+#include <sstream>
 #include <poll.h>
 
 namespace lotta {
@@ -16,6 +17,24 @@ const unsigned kReadPollEvent = static_cast<unsigned>(POLLIN)
 const unsigned kWritePollEvent = static_cast<unsigned>(POLLOUT);
 const unsigned kErrorPollEvent = static_cast<unsigned>(POLLERR)
     | static_cast<unsigned>(POLLNVAL);
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "hicpp-signed-bitwise"
+std::string innerEventsString(unsigned e) {
+  std::stringstream ss;
+  if (e & POLLIN) { ss << "IN "; }
+  if (e & POLLPRI) { ss << "PRI "; }
+  if (e & POLLRDHUP) { ss << "RDHUP "; }
+  if (e & POLLOUT) { ss << "OUT "; }
+  if (e & POLLERR) { ss << "ERR "; }
+  if (e & POLLNVAL) { ss << "NVAL "; }
+  std::string ret(ss.str());
+  if (ret.empty()) {
+    ret = "NULL";
+  }
+  return ret;
+}
+#pragma clang diagnostic pop
 
 Channel::Channel(EventLoop *loop, int fd)
     : loop_(loop),
@@ -91,5 +110,11 @@ void Channel::setIdxPoll(int idxPoll) {
 }
 bool Channel::isEmptyEvent() const {
   return events_ == kEmptyEvent;
+}
+std::string Channel::eventsString() const {
+  return innerEventsString(events_);
+}
+std::string Channel::reventsString() const {
+  return innerEventsString(revents_);
 }
 }
