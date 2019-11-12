@@ -33,9 +33,9 @@ class Channel : utils::noncopyable {
   void setIdxPoll(int);
   void setRevents(unsigned);
 
-  [[nodiscard]] unsigned getEvents() const;
-  [[nodiscard]] int getFd() const;
-  [[nodiscard]] int getIdxPoll() const;
+  [[nodiscard]] unsigned events() const;
+  [[nodiscard]] int fd() const;
+  [[nodiscard]] int idxPoll() const;
 
   [[nodiscard]] bool isEmptyEvent() const;
 

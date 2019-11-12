@@ -93,16 +93,16 @@ void Channel::disableEvents() {
   update();
 }
 
-int Channel::getFd() const {
+int Channel::fd() const {
   return fd_;
 }
-unsigned Channel::getEvents() const {
+unsigned Channel::events() const {
   return events_;
 }
 void Channel::setRevents(unsigned revents) {
   revents_ = revents;
 }
-int Channel::getIdxPoll() const {
+int Channel::idxPoll() const {
   return idxPoll_;
 }
 void Channel::setIdxPoll(int idxPoll) {

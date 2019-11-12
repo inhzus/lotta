@@ -25,7 +25,7 @@ void PollPoller::poll(
         auto found = channels_.find(pfd.fd);
         assert(found != channels_.end());
         Channel *channel = found->second;
-        assert(pfd.fd == channel->getFd());
+        assert(pfd.fd == channel->fd());
         channel->setRevents(pfd.revents);
         activeChannels.push_back(channel);
         if (--num <= 0) break;
@@ -36,22 +36,22 @@ void PollPoller::poll(
 
 void PollPoller::updateChannel(Channel *channel) {
   loop_->assertTheSameThread();
-  SPDLOG_TRACE("fd: {}, events: {}", channel->getFd(), channel->eventsString());
-  if (channel->getIdxPoll() < 0) {
-    assert(channels_.find(channel->getFd()) == channels_.end());
+  SPDLOG_TRACE("fd: {}, events: {}", channel->fd(), channel->eventsString());
+  if (channel->idxPoll() < 0) {
+    assert(channels_.find(channel->fd()) == channels_.end());
     pollfd pfd{
-        channel->getFd(), static_cast<short>(channel->getEvents()), 0};
+        channel->fd(), static_cast<short>(channel->events()), 0};
     pollFds_.push_back(pfd);
     channel->setIdxPoll(static_cast<int> (pollFds_.size()) - 1);
     channels_[pfd.fd] = channel;
   } else {
-    assert(channels_.find(channel->getFd()) != channels_.end());
-    assert(channels_[channel->getFd()] == channel);
-    int idx = channel->getIdxPoll();
+    assert(channels_.find(channel->fd()) != channels_.end());
+    assert(channels_[channel->fd()] == channel);
+    int idx = channel->idxPoll();
     assert(0 <= idx && idx < static_cast<int>(pollFds_.size()));
     pollfd &pfd = pollFds_[idx];
-    assert(pfd.fd == channel->getFd() || pfd.fd == -1);
-    pfd.events = static_cast<short>(channel->getEvents());
+    assert(pfd.fd == channel->fd() || pfd.fd == -1);
+    pfd.events = static_cast<short>(channel->events());
     pfd.revents = 0;
     if (channel->isEmptyEvent()) {
       pfd.fd = -1;

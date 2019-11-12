@@ -25,9 +25,9 @@ class Timer {
   void run() const { callback_(); }
   void restart(time_point now);
 
-  [[nodiscard]] time_point getWhen() const { return when_; }
-  [[nodiscard]] bool isRepeat() const { return repeat_; }
-  [[nodiscard]] int64_t getSequence() const { return sequence_; }
+  [[nodiscard]] time_point when() const { return when_; }
+  [[nodiscard]] bool repeat() const { return repeat_; }
+  [[nodiscard]] int64_t sequence() const { return sequence_; }
 
  private:
   const Callback callback_;

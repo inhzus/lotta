@@ -110,7 +110,7 @@ void TimerQueue::resetTimers(
     TimerQueue::time_point now, const std::vector<TimerEntry> &expired) {
   for (const TimerEntry &entry : expired) {
     auto[it, isCancelledWhenCallback] = findTimer(cancelledTimers_, entry);
-    if (entry.second->isRepeat() && !isCancelledWhenCallback) {
+    if (entry.second->repeat() && !isCancelledWhenCallback) {
       entry.second->restart(now);
       pushTimerToMap(entry.second);
     }
@@ -122,7 +122,7 @@ void TimerQueue::resetTimers(
 
 void TimerQueue::addTask(const std::shared_ptr<Timer> &timer) {
   loop_->assertTheSameThread();
-  time_point when = timer->getWhen();
+  time_point when = timer->when();
   bool pushedToFirst = pushTimerToMap(timer);
   if (pushedToFirst) {
     resetTimerFd(fd_, when);
@@ -132,18 +132,18 @@ void TimerQueue::addTask(const std::shared_ptr<Timer> &timer) {
 void TimerQueue::cancelTask(const std::shared_ptr<Timer> &timer) {
   loop_->assertTheSameThread();
   auto[it, isFound] = findTimer(
-      timers_, TimerEntry(timer->getWhen(), timer));
+      timers_, TimerEntry(timer->when(), timer));
   if (isFound) {
     timers_.erase(it);
   } else if (doingTimerCallback_) {
-    cancelledTimers_.insert(TimerEntry(timer->getWhen(), timer));
+    cancelledTimers_.insert(TimerEntry(timer->when(), timer));
   }
 }
 
 bool TimerQueue::pushTimerToMap(const std::shared_ptr<Timer> &timer) {
   bool pushedToFirst = (
-      timers_.empty() || timer->getWhen() < timers_.begin()->first);
-  timers_.insert(TimerEntry(timer->getWhen(), timer));
+      timers_.empty() || timer->when() < timers_.begin()->first);
+  timers_.insert(TimerEntry(timer->when(), timer));
   return pushedToFirst;
 }
 
