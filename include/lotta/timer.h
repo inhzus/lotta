@@ -21,20 +21,18 @@ class Timer {
 
   Timer(Callback callback, time_point when, double interval) :
       callback_(std::move(callback)), when_(when), interval_(interval),
-      repeat_(interval > 0), sequence_(++s_numTimer_) {}
+      repeat_(interval > 0) {}
   void run() const { callback_(); }
-  void restart(time_point now);
+  void restart();
 
   [[nodiscard]] time_point when() const { return when_; }
   [[nodiscard]] bool repeat() const { return repeat_; }
-  [[nodiscard]] int64_t sequence() const { return sequence_; }
 
  private:
   const Callback callback_;
   time_point when_;
   const double interval_;
   const bool repeat_;
-  const int64_t sequence_;
 
   static std::atomic_int64_t s_numTimer_;
 

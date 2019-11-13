@@ -6,12 +6,11 @@
 
 namespace lotta {
 
-std::atomic_int64_t Timer::s_numTimer_ = 0;
-void Timer::restart(Timer::time_point now) {
+void Timer::restart() {
   if (repeat_) {
     std::chrono::duration<double> dur(interval_);
     when_ +=
-        std::chrono::duration_cast<std::chrono::steady_clock::duration>(dur);
+        std::chrono::duration_cast<duration>(dur);
   }
 }
 

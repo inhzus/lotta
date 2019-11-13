@@ -111,7 +111,7 @@ void TimerQueue::resetTimers(
   for (const TimerEntry &entry : expired) {
     auto[it, isCancelledWhenCallback] = findTimer(cancelledTimers_, entry);
     if (entry.second->repeat() && !isCancelledWhenCallback) {
-      entry.second->restart(now);
+      entry.second->restart();
       pushTimerToMap(entry.second);
     }
   }

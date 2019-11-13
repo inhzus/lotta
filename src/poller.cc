@@ -17,7 +17,7 @@ class Initializer {
       ::spdlog::set_level(::spdlog::level::trace);
       // format as: "T(colored short for level) [12D(day of month)
       // 15:04:05:678] 9691(thread id) [poller.cc:20] actual logging message"
-      ::spdlog::set_pattern("%^%L%$ [%dD %T:%e] %t [%s:%#] %v");
+      ::spdlog::set_pattern("%^%L%$ [%D %T.%e] %t [%s:%#] %v");
       SPDLOG_INFO("logger initialized"); // NOLINT
       // (bugprone-lambda-function-name)
       return 0;

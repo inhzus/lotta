@@ -13,7 +13,7 @@ namespace lotta {
 
 class PollPoller : public Poller {
  public:
-  PollPoller(EventLoop *loop);
+  explicit PollPoller(EventLoop *loop);
   void poll(int timeout, std::vector<Channel *> &activeChannels) override;
   void updateChannel(Channel *channel) override;
  private:
