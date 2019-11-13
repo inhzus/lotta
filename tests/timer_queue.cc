@@ -2,6 +2,7 @@
 // Created by suun on 11/11/19.
 //
 
+#include "capture.h"
 #include "lotta/event_loop.h"
 #include "lotta/utils/logging.h"
 #include <gmock/gmock.h>
@@ -15,7 +16,21 @@ TEST(TimerQueue, runAfter) {
     l.quit();
     SPDLOG_WARN("loop quit");
   }, 2);
-  loop.loop();
+  auto records = Record::capture([&loop = loop]() {
+    loop.loop();
+  });
+  std::vector<Record> samples;
+  std::copy_if(
+      records.begin(), records.end(),
+      std::back_inserter(samples),
+      [](const Record &record) {
+        return record.msg_.rfind("looping") != std::string::npos ||
+            record.msg_ == "after 1 second" ||
+            record.msg_ == "loop quit";
+      });
+  ASSERT_EQ(3, samples.size());
+  EXPECT_TRUE(Record::diff(samples[0], samples[1], 1000));
+  EXPECT_TRUE(Record::diff(samples[0], samples[2], 2000));
 }
 
 TEST(TimerQueue, runEvery) {
