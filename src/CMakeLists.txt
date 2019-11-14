@@ -6,8 +6,10 @@ endif ()
 add_library(net_src
         channel.cc
         event_loop.cc
+        net_addr.cc
         poller.cc
         poll_poller.cc
+        socket.cc
         timer.cc
         timer_queue.cc
         utils/logging.cc
