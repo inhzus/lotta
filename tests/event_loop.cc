@@ -6,7 +6,7 @@
 #include "lotta/event_loop.h"
 #include "lotta/channel.h"
 #include "lotta/utils/logging.h"
-#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <sys/timerfd.h>
 
 TEST(EventLoop, constructor) {

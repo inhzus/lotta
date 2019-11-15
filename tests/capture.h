@@ -6,7 +6,7 @@
 #define LOTTA_TESTS_HEADER_H
 
 #include "lotta/utils/logging.h"
-#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <chrono>
 #include <regex>
 

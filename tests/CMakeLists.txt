@@ -4,4 +4,6 @@ add_executable(net_test
     capture.cc
     event_loop.cc
     timer_queue.cc)
-target_link_libraries(net_test gtest_main gtest gmock_main gmock net_src)
+enable_testing()
+find_package(GTest REQUIRED)
+target_link_libraries(net_test GTest::GTest GTest::Main net_src)

@@ -5,7 +5,7 @@
 #include "capture.h"
 #include "lotta/event_loop.h"
 #include "lotta/utils/logging.h"
-#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 TEST(TimerQueue, runAfter) {
   lotta::EventLoop loop;

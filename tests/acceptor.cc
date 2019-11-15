@@ -6,7 +6,7 @@
 #include "lotta/acceptor.h"
 #include "lotta/event_loop.h"
 #include "lotta/net_addr.h"
-#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 TEST(Acceptor, default_) {
   lotta::EventLoop loop;
@@ -44,5 +44,7 @@ TEST(Acceptor, default_) {
       });
   EXPECT_EQ(1, bind.size());
   EXPECT_EQ(1, accepted.size());
-  ASSERT_TRUE(Record::diff(bind[0], accepted[0], 5));
+  if (!bind.empty() && !accepted.empty()) {
+    ASSERT_TRUE(Record::diff(bind[0], accepted[0], 5));
+  }
 }
