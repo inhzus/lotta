@@ -5,6 +5,11 @@
 #ifndef LOTTA_SOCKET_H
 #define LOTTA_SOCKET_H
 
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 namespace lotta {
@@ -20,6 +25,18 @@ inline ssize_t write(int fd, const void *buf, size_t n) {
 inline int close(int fd) {
   return ::close(fd);
 }
+
+inline int socket(int domain) {
+  return ::socket(
+      domain,
+      SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, // NOLINT
+      IPPROTO_TCP);
+}
+
+inline int open(const char *file, int flags) {
+  return ::open(file, flags);
+}
+
 }
 
 class NetAddr;
@@ -29,14 +46,14 @@ class Socket {
   explicit Socket(int fd);
   ~Socket();
 
-  Socket &listen();
-  Socket &bind(const NetAddr &addr);
+  void listen();
+  void bind(const NetAddr &addr);
   int accept(NetAddr &addr);
 
-  Socket &setReuseAddr(bool);
-  Socket &setReusePort(bool);
-  Socket &setKeepAlive(bool);
-  Socket &setTcpNoDelay(bool);
+  void setReuseAddr(bool);
+  void setReusePort(bool);
+  void setKeepAlive(bool);
+  void setTcpNoDelay(bool);
 
   [[nodiscard]] int fd() const;
 

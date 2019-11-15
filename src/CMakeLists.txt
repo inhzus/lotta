@@ -4,6 +4,7 @@ if (NOT TARGET spdlog)
 endif ()
 
 add_library(net_src
+        acceptor.cc
         channel.cc
         event_loop.cc
         net_addr.cc

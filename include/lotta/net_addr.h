@@ -12,6 +12,7 @@ namespace lotta {
 
 struct NetAddr {
  public:
+  NetAddr();
   explicit NetAddr(uint16_t port, bool loopback = false, bool ipv6 = false);
   NetAddr(const char *host, uint16_t port, bool ipv6 = false);
 

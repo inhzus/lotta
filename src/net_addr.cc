@@ -12,6 +12,8 @@
 
 namespace lotta {
 
+NetAddr::NetAddr() : addr_{} {}
+
 NetAddr::NetAddr(uint16_t port, bool loopback, bool ipv6) : addr_{} {
   if (ipv6) {
     auto addr = reinterpret_cast<sockaddr_in6 *>(&addr_);
@@ -22,22 +24,12 @@ NetAddr::NetAddr(uint16_t port, bool loopback, bool ipv6) : addr_{} {
     auto addr = reinterpret_cast<sockaddr_in *>(&addr_);
     addr->sin_family = AF_INET;
     addr->sin_port = htons(port);
-    addr->sin_addr.s_addr = loopback ? INADDR_LOOPBACK : INADDR_ANY;
+    addr->sin_addr.s_addr = htonl(loopback ? INADDR_LOOPBACK : INADDR_ANY);
   }
 }
 
 NetAddr::NetAddr(const char *host, uint16_t port, bool ipv6) : addr_{} {
   int ret;
-//  if (ipv6) {
-//    addr6_ = sockaddr_in6{
-//        AF_INET6, htons(port), {}, {}, {}
-//    };
-//    ret = inet_pton(AF_INET6, host, &addr6_.sin6_addr);
-//  } else {
-//    addr_ = static_cast<sockaddr_storage>(sockaddr_in{AF_INET, htons(port),
-//                                                      {}});
-//    ret = inet_pton(AF_INET, host, &addr_.sin_addr);
-//  }
   if (ipv6) {
     auto addr = reinterpret_cast<sockaddr_in6 *>(&addr_);
     addr->sin6_family = AF_INET6;
