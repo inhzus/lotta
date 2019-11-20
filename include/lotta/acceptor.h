@@ -5,6 +5,7 @@
 #ifndef LOTTA_ACCEPTOR_H
 #define LOTTA_ACCEPTOR_H
 
+#include "lotta/utils/noncopyable.h"
 #include <functional>
 #include <memory>
 
@@ -15,7 +16,7 @@ class EventLoop;
 class NetAddr;
 class Socket;
 
-class Acceptor {
+class Acceptor : utils::noncopyable {
  public:
   using ConnCallback = std::function<void(int, const NetAddr &)>;
 

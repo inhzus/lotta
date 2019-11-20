@@ -5,6 +5,7 @@ endif ()
 
 add_library(net_src
         acceptor.cc
+        buffer.cc
         channel.cc
         event_loop.cc
         net_addr.cc
