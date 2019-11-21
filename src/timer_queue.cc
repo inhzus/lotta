@@ -61,6 +61,7 @@ TimerQueue::TimerQueue(lotta::EventLoop *loop) :
 
 TimerQueue::~TimerQueue() {
   channel_->disableEvents();
+  channel_->remove();
   socket::close(fd_);
 }
 

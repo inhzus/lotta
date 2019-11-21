@@ -99,7 +99,7 @@ TEST(Capture, Record) {
   auto records = Record::capture([]() {
     lotta::EventLoop loop;
   });
-  EXPECT_EQ(records.size(), 5);
+  EXPECT_EQ(records.size(), 7);
   std::vector<Record> chRecords;
   std::regex channelPattern(R"(fd: \d+, events: .*)");
   std::copy_if(

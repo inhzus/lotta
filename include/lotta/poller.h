@@ -21,6 +21,7 @@ class Poller : utils::noncopyable {
   virtual ~Poller();
   virtual void poll(int timeout, std::vector<Channel *> &channels) = 0;
   virtual void updateChannel(Channel *channel) = 0;
+  virtual void removeChannel(Channel *channel) = 0;
   static std::unique_ptr<Poller> get(EventLoop *loop);
 
  protected:

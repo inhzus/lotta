@@ -48,6 +48,7 @@ EventLoop::EventLoop() :
 EventLoop::~EventLoop() {
   t_eventLoopThisThread = nullptr;
   wakeChannel_->disableEvents();
+  wakeChannel_->remove();
   socket::close(wakeupFd_);
 }
 
@@ -75,7 +76,13 @@ void EventLoop::quit() {
 }
 
 void EventLoop::updateChannel(Channel *channel) {
+  assertTheSameThread();
   poller_->updateChannel(channel);
+}
+
+void EventLoop::removeChannel(Channel *channel) {
+  assertTheSameThread();
+  poller_->removeChannel(channel);
 }
 
 void EventLoop::exec(EventLoop::Function f) {

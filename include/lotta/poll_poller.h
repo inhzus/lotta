@@ -16,6 +16,7 @@ class PollPoller : public Poller {
   explicit PollPoller(EventLoop *loop);
   void poll(int timeout, std::vector<Channel *> &activeChannels) override;
   void updateChannel(Channel *channel) override;
+  void removeChannel(Channel *channel) override;
  private:
   std::vector<pollfd> pollFds_;
 };

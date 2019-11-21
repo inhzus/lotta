@@ -60,6 +60,10 @@ void Channel::handleEvent() {
 void Channel::update() {
   loop_->updateChannel(this);
 }
+void Channel::remove() {
+  assert(isEmptyEvent());
+  loop_->removeChannel(this);
+}
 
 void Channel::setReadCallback(Channel::Callback readCallback) {
   readCallback_ = std::move(readCallback);

@@ -29,6 +29,7 @@ class EventLoop : utils::noncopyable {
   void quit();
 
   void updateChannel(Channel *);
+  void removeChannel(Channel *);
 
   void exec(Function);
   void pushQueue(Function);

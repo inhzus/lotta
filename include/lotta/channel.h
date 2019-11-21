@@ -19,6 +19,7 @@ class Channel : utils::noncopyable {
   Channel(EventLoop *loop, int fd);
   void handleEvent();
   void update();
+  void remove();
 
   void setReadCallback(Callback);
   void setWriteCallback(Callback);

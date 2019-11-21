@@ -30,6 +30,7 @@ Acceptor::Acceptor(
 }
 Acceptor::~Acceptor() {
   channel_->disableEvents();
+  channel_->remove();
   socket::close(idleFd_);
 }
 void Acceptor::listen() {

@@ -7,8 +7,8 @@
 #include "lotta/utils/logging.h"
 #include <cassert>
 #include <poll.h>
-namespace lotta {
 
+namespace lotta {
 
 PollPoller::PollPoller(EventLoop *loop) : Poller(loop) {}
 
@@ -57,5 +57,21 @@ void PollPoller::updateChannel(Channel *channel) {
       pfd.fd = -1;
     }
   }
+}
+void PollPoller::removeChannel(Channel *channel) {
+  loop_->assertTheSameThread();
+  SPDLOG_TRACE("remove channel with fd {}", channel->fd());
+  assert(channels_.find(channel->fd()) != channels_.end());
+  assert(channels_[channel->fd()] == channel);
+  assert(channel->isEmptyEvent());
+  int idx = channel->idxPoll();
+  assert(0 <= idx && idx < static_cast<int>(pollFds_.size()));
+  assert(pollFds_[idx].fd == -1 && pollFds_[idx].events == channel->events());
+  [[maybe_unused]] size_t n = channels_.erase(channel->fd());
+  assert(n == 1);
+  if (idx != pollFds_.size() - 1) {
+    std::iter_swap(pollFds_.begin() + idx, pollFds_.end() - 1);
+  }
+  pollFds_.pop_back();
 }
 }
