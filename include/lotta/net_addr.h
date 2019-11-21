@@ -18,6 +18,7 @@ struct NetAddr {
 
   explicit NetAddr(const sockaddr_in &);
   explicit NetAddr(const sockaddr_in6 &);
+  explicit NetAddr(const sockaddr_storage &addr);
 
   [[nodiscard]] sa_family_t family() const;
   [[nodiscard]] uint16_t port() const;

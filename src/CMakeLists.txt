@@ -12,6 +12,7 @@ add_library(net_src
         poller.cc
         poll_poller.cc
         socket.cc
+        tcp_server.cc
         timer.cc
         timer_queue.cc
         utils/logging.cc

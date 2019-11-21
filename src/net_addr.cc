@@ -56,6 +56,9 @@ NetAddr::NetAddr(const sockaddr_in &addr) : addr_{} {
 NetAddr::NetAddr(const sockaddr_in6 &addr6) : addr_{} {
   memcpy(&addr_, &addr6, sizeof(addr6));
 }
+
+NetAddr::NetAddr(const sockaddr_storage &addr) : addr_(addr) {}
+
 sa_family_t NetAddr::family() const {
   return addr_.ss_family;
 }

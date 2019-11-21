@@ -37,6 +37,8 @@ inline int open(const char *file, int flags) {
   return ::open(file, flags);
 }
 
+sockaddr_storage getSockName(int fd);
+
 }
 
 class NetAddr;

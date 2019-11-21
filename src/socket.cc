@@ -17,6 +17,17 @@
 }while(0)
 
 namespace lotta {
+namespace socket {
+
+sockaddr_storage getSockName(int fd) {
+  sockaddr_storage addr{};
+  auto len = static_cast<socklen_t >(sizeof(addr));
+  int n = ::getsockname(fd, reinterpret_cast<sockaddr *>(&addr), &len);
+  HANDLE_ERR(n < 0);
+  return addr;
+}
+
+}
 
 Socket::Socket(int fd) : fd_(fd) {}
 Socket::~Socket() {
