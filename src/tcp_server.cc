@@ -17,8 +17,9 @@ void defaultConnCallback(const TcpServer::ConnPtr &) {
   SPDLOG_TRACE("connection established");
 }
 
-void defaultMsgCallback(const TcpServer::ConnPtr &, Buffer *buf) {
+void defaultMsgCallback(const TcpServer::ConnPtr &conn, Buffer *buf) {
   Slice slice = buf->retrieve();
+  conn->send("what");
   SPDLOG_TRACE("received: {}", slice);
 }
 

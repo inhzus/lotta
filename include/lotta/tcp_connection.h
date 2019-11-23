@@ -46,6 +46,12 @@ class TcpConnection : utils::noncopyable,
 
   void connEstablished();
 
+  void send(const std::string &msg);
+  void sendTask(const std::string &msg);
+
+  void shutdown();
+  void shutdownTask();
+
   void setConnCallback(ConnCallback);
   void setMsgCallback(MsgCallback);
   void setCloseCallback(CloseCallback);
@@ -56,7 +62,7 @@ class TcpConnection : utils::noncopyable,
  private:
 // TODO friend class TcpServer;
 // hide members after implementation of TcpServer & TcpConnection
-  enum class State { Connecting, Connected, Disconnected };
+  enum class State { Connecting, Connected, Disconnecting, Disconnected };
 
   EventLoop *loop_;
   std::string name_;
@@ -72,7 +78,7 @@ class TcpConnection : utils::noncopyable,
   RmConnCallback rmConnCallback_;
 
   Buffer inBuf;
-  Buffer outBuf;
+  Buffer outBuf_;
 };
 
 }

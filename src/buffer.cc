@@ -5,7 +5,6 @@
 #include "lotta/buffer.h"
 #include "lotta/socket.h"
 #include "lotta/utils/logging.h"
-#include <cerrno>
 #include <sys/ioctl.h>
 
 namespace lotta {
@@ -21,8 +20,7 @@ ssize_t Buffer::readFrom(int fd) {
   assert(ret == n);
   append(&*buf.begin(), ret);
   if (n < 0 || ret < 0) {
-    SPDLOG_WARN("buffer read from fd error: unread {}, read {} errno {}",
-                n, ret, errno);
+    SPDLOG_ERRNO_F("buffer read from fd error: unread{}, read{}", n, ret);
   }
   return ret;
 }

@@ -26,6 +26,8 @@ inline int close(int fd) {
   return ::close(fd);
 }
 
+int shutdownWrite(int fd);
+
 inline int socket(int domain) {
   return ::socket(
       domain,

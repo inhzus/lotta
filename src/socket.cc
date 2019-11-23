@@ -10,20 +10,20 @@
 #include <cerrno>
 #include <cstring>
 
-#define HANDLE_ERR(condition) do { \
-  if (condition) { \
-    SPDLOG_CRITICAL("fail({}) to {}", std::strerror(errno), __FUNCTION__); \
-  } \
-}while(0)
-
 namespace lotta {
 namespace socket {
+
+int shutdownWrite(int fd) {
+  int n = ::shutdown(fd, SHUT_WR);
+  SPDLOG_ERRNO_IF(n < 0);
+  return n;
+}
 
 sockaddr_storage getSockName(int fd) {
   sockaddr_storage addr{};
   auto len = static_cast<socklen_t >(sizeof(addr));
   int n = ::getsockname(fd, reinterpret_cast<sockaddr *>(&addr), &len);
-  HANDLE_ERR(n < 0);
+  SPDLOG_ERRNO_IF(n < 0);
   return addr;
 }
 
@@ -44,12 +44,12 @@ Socket::~Socket() {
 }
 void Socket::listen() {
   int n = ::listen(fd_, SOMAXCONN);
-  HANDLE_ERR(n < 0);
+  SPDLOG_ERRNO_IF(n < 0);
 }
 void Socket::bind(const NetAddr &addr) {
   int n = ::bind(fd_, reinterpret_cast<const sockaddr *>(&addr.addr_),
                  sizeof(sockaddr_in6));
-  HANDLE_ERR(n < 0);
+  SPDLOG_ERRNO_IF(n < 0);
 }
 int Socket::accept(NetAddr &addr) {
   socklen_t n = sizeof(sockaddr_in6);
@@ -75,22 +75,22 @@ int Socket::accept(NetAddr &addr) {
 void Socket::setReuseAddr(bool b) {
   int v = b ? 1 : 0;
   int n = ::setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &v, sizeof(v));
-  HANDLE_ERR(n < 0);
+  SPDLOG_ERRNO_IF(n < 0);
 }
 void Socket::setReusePort(bool b) {
   int v = b ? 1 : 0;
   int n = ::setsockopt(fd_, SOL_SOCKET, SO_REUSEPORT, &v, sizeof(v));
-  HANDLE_ERR(n < 0);
+  SPDLOG_ERRNO_IF(n < 0);
 }
 void Socket::setKeepAlive(bool b) {
   int v = b ? 1 : 0;
   int n = ::setsockopt(fd_, SOL_SOCKET, SO_KEEPALIVE, &v, sizeof(v));
-  HANDLE_ERR(n < 0);
+  SPDLOG_ERRNO_IF(n < 0);
 }
 void Socket::setTcpNoDelay(bool b) {
   int v = b ? 1 : 0;
   int n = ::setsockopt(fd_, IPPROTO_TCP, TCP_NODELAY, &v, sizeof(v));
-  HANDLE_ERR(n < 0);
+  SPDLOG_ERRNO_IF(n < 0);
 }
 int Socket::fd() const {
   return fd_;

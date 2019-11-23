@@ -7,6 +7,7 @@
 #include "lotta/event_loop.h"
 #include "lotta/socket.h"
 #include "lotta/utils/logging.h"
+#include <cerrno>
 #include <cstring>
 
 namespace lotta {
@@ -25,7 +26,7 @@ TcpConnection::TcpConnection(
     localAddr_(localAddr),
     peerAddr_(peerAddr),
     inBuf(),
-    outBuf() {
+    outBuf_() {
   channel_->setReadCallback(std::bind(&TcpConnection::handleRead, this));
   channel_->setWriteCallback(std::bind(&TcpConnection::handleWrite, this));
   channel_->setCloseCallback(std::bind(&TcpConnection::handleClose, this));
@@ -54,15 +55,17 @@ void TcpConnection::handleWrite() {
     SPDLOG_INFO("fd {} down, no more writing", channel_->fd());
     return;
   }
-  ssize_t n = socket::write(channel_->fd(), outBuf.peek(), outBuf.readable());
+  ssize_t n = socket::write(channel_->fd(), outBuf_.peek(), outBuf_.readable());
   if (n <= 0) {
-    SPDLOG_WARN("write fail {}", errno);
+    SPDLOG_ERRNO();
     return;
   }
-  outBuf.retrieve(n);
-  if (outBuf.readable() == 0) {
+  outBuf_.retrieve(n);
+  if (outBuf_.readable() == 0) {
     channel_->disableWriting();
-    // TODO queue in loop: write complete callback
+    if (state_ == State::Disconnecting) {
+      shutdownTask();
+    }
   }
 }
 
@@ -88,6 +91,41 @@ void TcpConnection::connEstablished() {
   state_ = State::Connected;
   channel_->enableReading();
   connCallback_(shared_from_this());
+}
+
+void TcpConnection::send(const std::string &msg) {
+  if (state_ != State::Connected) { return; }
+  loop_->exec(std::bind(&TcpConnection::sendTask, this, msg));
+}
+void TcpConnection::sendTask(const std::string &msg) {
+  loop_->assertTheSameThread();
+  ssize_t n{};
+  if (!channel_->isWriting() && outBuf_.readable() == 0) {
+    n = socket::write(channel_->fd(), msg.data(), msg.size());
+    if (n < 0) {
+      n = 0;
+      if (errno != EWOULDBLOCK) { SPDLOG_ERRNO(); }
+    } else if (n < msg.size()) {
+      SPDLOG_TRACE("written {}, total {}", n, msg.size());
+    }
+  }
+  if (n < msg.size()) {
+    outBuf_.append(msg.data() + n, msg.size() - n);
+    if (!channel_->isWriting()) {
+      channel_->enableWriting();
+    }
+  }
+}
+
+void TcpConnection::shutdown() {
+  if (state_ != State::Connected) { return; }
+  state_ = State::Disconnecting;
+  loop_->exec(std::bind(&TcpConnection::shutdownTask, this));
+}
+void TcpConnection::shutdownTask() {
+  loop_->assertTheSameThread();
+  if (channel_->isWriting()) { return; }
+  socket::shutdownWrite(channel_->fd());
 }
 
 void TcpConnection::setConnCallback(TcpConnection::ConnCallback cb) {
