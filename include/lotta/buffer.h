@@ -12,6 +12,7 @@
 #include <cstring>
 #include <climits>
 #include <endian.h>
+#include "spdlog/fmt/ostr.h"
 
 namespace lotta {
 
@@ -46,6 +47,11 @@ struct Slice {
 
   [[nodiscard]] bool empty() const {
     return n == 0;
+  }
+
+  friend std::ostream& operator<<(std::ostream &os, const Slice &slice) {
+    os.write(slice.data, slice.n);
+    return os;
   }
 };
 
@@ -141,6 +147,8 @@ class Buffer {
     assert(n <= readable());
     data_.resize(data_.size() - n);
   }
+
+  ssize_t readFrom(int fd);
 
   char *peek() { return begin() + idx_; }
   [[nodiscard]] const char *peek() const { return begin() + idx_; }

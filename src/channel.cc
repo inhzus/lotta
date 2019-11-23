@@ -47,6 +47,10 @@ void Channel::handleEvent() {
   if (revents_ & POLLNVAL) { // NOLINT(hicpp-signed-bitwise)
     SPDLOG_WARN("invalid polling request");
   }
+  if ((revents_ & POLLHUP) && !(revents_ & POLLIN) // NOLINT
+      && closeCallback_) {
+    closeCallback_();
+  }
   if (revents_ & kErrorPollEvent && errorCallback_) {
     errorCallback_();
   }
@@ -70,6 +74,9 @@ void Channel::setReadCallback(Channel::Callback readCallback) {
 }
 void Channel::setWriteCallback(Channel::Callback writeCallback) {
   writeCallback_ = std::move(writeCallback);
+}
+void Channel::setCloseCallback(lotta::Channel::Callback closeCallback) {
+  closeCallback_ = std::move(closeCallback);
 }
 void Channel::setErrorCallback(Channel::Callback errorCallback) {
   errorCallback_ = std::move(errorCallback);
@@ -114,6 +121,12 @@ void Channel::setIdxPoll(int idxPoll) {
 }
 bool Channel::isEmptyEvent() const {
   return events_ == kEmptyEvent;
+}
+bool Channel::isReading() const {
+  return events_ & kReadPollEvent;
+}
+bool Channel::isWriting() const {
+  return events_ & kWritePollEvent;
 }
 std::string Channel::eventsString() const {
   return innerEventsString(events_);

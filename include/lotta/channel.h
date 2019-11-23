@@ -23,6 +23,7 @@ class Channel : utils::noncopyable {
 
   void setReadCallback(Callback);
   void setWriteCallback(Callback);
+  void setCloseCallback(Callback);
   void setErrorCallback(Callback);
 
   void enableReading();
@@ -39,6 +40,8 @@ class Channel : utils::noncopyable {
   [[nodiscard]] int idxPoll() const;
 
   [[nodiscard]] bool isEmptyEvent() const;
+  [[nodiscard]] bool isReading() const;
+  [[nodiscard]] bool isWriting() const;
 
   [[nodiscard]] std::string eventsString() const;
   [[nodiscard]] std::string reventsString() const;
@@ -51,6 +54,7 @@ class Channel : utils::noncopyable {
 
   Callback readCallback_;
   Callback writeCallback_;
+  Callback closeCallback_;
   Callback errorCallback_;
 };
 

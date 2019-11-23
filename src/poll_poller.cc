@@ -44,6 +44,8 @@ void PollPoller::updateChannel(Channel *channel) {
     pollFds_.push_back(pfd);
     channel->setIdxPoll(static_cast<int> (pollFds_.size()) - 1);
     channels_[pfd.fd] = channel;
+    SPDLOG_DEBUG("init: channel fd: {}, idx: {}; pfd fd: {}",
+        channel->fd(), channel->idxPoll(), pfd.fd);
   } else {
     assert(channels_.find(channel->fd()) != channels_.end());
     assert(channels_[channel->fd()] == channel);
@@ -56,6 +58,8 @@ void PollPoller::updateChannel(Channel *channel) {
     if (channel->isEmptyEvent()) {
       pfd.fd = -1;
     }
+    SPDLOG_DEBUG("update: channel fd: {}, idx: {}, pfd fd: {}",
+        channel->fd(), channel->idxPoll(), pfd.fd);
   }
 }
 void PollPoller::removeChannel(Channel *channel) {

@@ -38,6 +38,7 @@ inline int open(const char *file, int flags) {
 }
 
 sockaddr_storage getSockName(int fd);
+int getSocketErrno(int fd);
 
 }
 

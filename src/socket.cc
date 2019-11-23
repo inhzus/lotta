@@ -27,6 +27,15 @@ sockaddr_storage getSockName(int fd) {
   return addr;
 }
 
+int getSocketErrno(int fd) {
+  int val{};
+  auto len = static_cast<socklen_t >(sizeof val);
+  if (::getsockopt(fd, SOL_SOCKET, SO_ERROR, &val, &len) < 0) {
+    return errno;
+  }
+  return val;
+}
+
 }
 
 Socket::Socket(int fd) : fd_(fd) {}
