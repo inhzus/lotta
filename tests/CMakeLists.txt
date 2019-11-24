@@ -4,6 +4,8 @@ add_executable(net_test
         buffer.cc
         capture.cc
         event_loop.cc
+        event_loop_thread.cc
+        tcp_server.cc
         timer_queue.cc)
 enable_testing()
 find_package(GTest REQUIRED)

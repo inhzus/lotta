@@ -19,7 +19,7 @@ void defaultConnCallback(const TcpServer::ConnPtr &) {
 
 void defaultMsgCallback(const TcpServer::ConnPtr &conn, Buffer *buf) {
   Slice slice = buf->retrieve();
-  conn->send("what");
+  conn->send(std::string("recv: " + slice.toString()));
   SPDLOG_TRACE("received: {}", slice);
 }
 

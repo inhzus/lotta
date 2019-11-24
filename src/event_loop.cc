@@ -145,19 +145,15 @@ bool EventLoop::isTheSameThread() const {
 }
 
 void EventLoop::wakeup() {
-  int tmp = 1;
+  uint64_t tmp = 1;
   auto n = socket::write(wakeupFd_, &tmp, sizeof(tmp));
-  if (n != sizeof(tmp)) {
-    SPDLOG_ERROR("fail to wakeup");
-  }
+  SPDLOG_ERRNO_IF(n != sizeof(tmp));
 }
 
 void EventLoop::handleWakeup() {
-  int tmp;
+  uint64_t tmp;
   auto n = socket::read(wakeupFd_, &tmp, sizeof(tmp));
-  if (n != sizeof(n)) {
-    SPDLOG_ERROR("fail to handle wakeup");
-  }
+  SPDLOG_ERRNO_IF(n != sizeof(tmp));
 }
 
 }
