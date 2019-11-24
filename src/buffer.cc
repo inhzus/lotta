@@ -15,12 +15,12 @@ ssize_t Buffer::readFrom(int fd) {
   int n;
   ioctl(fd, FIONREAD, &n);
   std::vector<char> buf;
-  buf.reserve(n);
-  ssize_t ret = socket::read(fd, &*buf.begin(), n);
+  makeSpace(n);
+  data_.resize(data_.size() + n);
+  ssize_t ret = socket::read(fd, &*(data_.end() - n), n);
   assert(ret == n);
-  append(&*buf.begin(), ret);
   if (n < 0 || ret < 0) {
-    SPDLOG_ERRNO_F("buffer read from fd error: unread{}, read{}", n, ret);
+    SPDLOG_ERRNO_F("buffer read from fd error: unread {}, read {}", n, ret);
   }
   return ret;
 }
