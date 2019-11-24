@@ -16,6 +16,7 @@ namespace lotta {
 class Acceptor;
 class Buffer;
 class EventLoop;
+class EventLoopPool;
 class NetAddr;
 class TcpConnection;
 
@@ -30,6 +31,7 @@ class TcpServer : utils::noncopyable {
   ~TcpServer();
 
   void start();
+  void setThreadNum(unsigned n);
 
  private:
   void newConnection(int fd, const NetAddr &addr);
@@ -39,6 +41,7 @@ class TcpServer : utils::noncopyable {
   using ConnMap = std::map<std::string, ConnPtr>;
 
   EventLoop *loop_;
+  std::unique_ptr<EventLoopPool> pool_;
   std::unique_ptr<Acceptor> acceptor_;
   ConnCallback connCallback_;
   MsgCallback msgCallback_;

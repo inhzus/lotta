@@ -6,6 +6,7 @@
 #include "lotta/acceptor.h"
 #include "lotta/buffer.h"
 #include "lotta/event_loop.h"
+#include "lotta/event_loop_pool.h"
 #include "lotta/net_addr.h"
 #include "lotta/socket.h"
 #include "lotta/tcp_connection.h"
@@ -32,6 +33,7 @@ TcpServer::TcpServer(
     const NetAddr &addr,
     std::string name) :
     loop_(loop),
+    pool_(std::make_unique<EventLoopPool>(loop)),
     acceptor_(std::make_unique<Acceptor>(loop, addr)),
     connCallback_(defaultConnCallback),
     msgCallback_(defaultMsgCallback),
@@ -58,8 +60,13 @@ void TcpServer::start() {
     SPDLOG_WARN("server started");
     return;
   }
+  pool_->start();
   started_ = true;
   loop_->exec(std::bind(&Acceptor::listen, acceptor_.get()));
+}
+
+void TcpServer::setThreadNum(unsigned n) {
+  pool_->setThreadNum(n);
 }
 
 void TcpServer::newConnection(int fd, const lotta::NetAddr &addr) {
@@ -68,15 +75,16 @@ void TcpServer::newConnection(int fd, const lotta::NetAddr &addr) {
   std::string connName = fmt::format(
       "{}-{}#{}", name_, localAddr.addr(), connIdx_++);
   SPDLOG_INFO("New connection {} from {}", connName, addr.addr());
+  EventLoop *ioLoop = pool_->getLoop();
   ConnPtr conn = std::make_shared<TcpConnection>(
-      loop_, connName, fd, localAddr, addr);
+      ioLoop, connName, fd, localAddr, addr);
   connections_[connName] = conn;
   conn->setConnCallback(connCallback_);
   conn->setMsgCallback(msgCallback_);
   conn->setCloseCallback(closeCallback_);
   conn->setRmConnCallback(std::bind(
       &TcpServer::removeConn, this, std::placeholders::_1));
-  conn->connEstablished();
+  ioLoop->exec(std::bind(&TcpConnection::connEstablished, conn));
 }
 
 void TcpServer::removeConn(const TcpServer::ConnPtr &conn) {

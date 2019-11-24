@@ -18,7 +18,7 @@ void PollPoller::poll(
   if (num < 0) {
     SPDLOG_ERROR("poll returns negative number");
   } else if (num == 0) {
-    SPDLOG_TRACE("poll timeout");
+//    SPDLOG_TRACE("poll timeout");
   } else {
     for (const pollfd &pfd : pollFds_) {
       if (pfd.revents != 0) {
