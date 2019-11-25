@@ -17,8 +17,14 @@
 
 #define SPDLOG_ERRNO_F(fmt, ...) \
   do { \
-    SPDLOG_ERROR("fail({}) to {}" #fmt, \
-        std::strerror(errno), __FUNCTION__, __VA_ARGS__); \
+    SPDLOG_ERROR("fail({}) to {}, " fmt, \
+        std::strerror(errno), __FUNCTION__, ## __VA_ARGS__); \
+  } while (0)
+
+#define SPDLOG_ERRNO_L(LEVEL, fmt,  ...) \
+  do { \
+    SPDLOG_##LEVEL("fail({}) to {}, " fmt, \
+        std::strerror(errno), __FUNCTION__, ## __VA_ARGS__); \
   } while (0)
 
 #define SPDLOG_ERRNO_IF(condition) \

@@ -59,13 +59,16 @@ int Socket::accept(NetAddr &addr) {
   if (fd < 0) {
     switch (int err = errno) {
       case EAGAIN:
-      case ECONNABORTED:
-      case EINTR:
+      case ENETDOWN:
       case EPROTO:
-      case EPERM:
-      case EMFILE:SPDLOG_WARN("accept encounter error {}", err);
+      case ENOPROTOOPT:
+      case EHOSTDOWN:
+      case ENONET:
+      case EHOSTUNREACH:
+      case EOPNOTSUPP:
+      case ENETUNREACH:SPDLOG_ERRNO_L(WARN, "acceptable err");
         break;
-      default:SPDLOG_CRITICAL("fail({}) to accept", err);
+      default:SPDLOG_ERRNO();
         break;
     }
   }
