@@ -14,17 +14,17 @@
 
 namespace lotta {
 
-void defaultConnCallback(const TcpServer::ConnPtr &) {
+static void defaultConnCallback(const TcpServer::ConnPtr &) {
   SPDLOG_TRACE("connection established");
 }
 
-void defaultMsgCallback(const TcpServer::ConnPtr &conn, Buffer *buf) {
+static void defaultMsgCallback(const TcpServer::ConnPtr &conn, Buffer *buf) {
   Slice slice = buf->retrieve();
   conn->send(std::string("recv: " + slice.toString()));
   SPDLOG_TRACE("received: {}", slice);
 }
 
-void defaultCloseCallback(const TcpServer::ConnPtr &) {
+static void defaultCloseCallback(const TcpServer::ConnPtr &) {
   SPDLOG_TRACE("connection closed");
 }
 

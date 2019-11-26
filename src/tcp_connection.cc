@@ -128,6 +128,14 @@ void TcpConnection::shutdownTask() {
   socket::shutdownWrite(channel_->fd());
 }
 
+void TcpConnection::close() {
+  state_ = State::Disconnecting;
+  loop_->exec([this] {
+    handleClose();
+    socket::close(this->channel_->fd());
+  });
+}
+
 void TcpConnection::setConnCallback(TcpConnection::ConnCallback cb) {
   connCallback_ = std::move(cb);
 }

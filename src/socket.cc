@@ -27,6 +27,14 @@ sockaddr_storage getSockName(int fd) {
   return addr;
 }
 
+sockaddr_storage getPeerName(int fd) {
+  sockaddr_storage addr{};
+  auto len = static_cast<socklen_t>(sizeof(addr));
+  int n = ::getpeername(fd, reinterpret_cast<sockaddr *>(&addr), &len);
+  SPDLOG_ERRNO_IF(n < 0);
+  return addr;
+}
+
 int getSocketErrno(int fd) {
   int val{};
   auto len = static_cast<socklen_t >(sizeof val);

@@ -52,6 +52,8 @@ class TcpConnection : utils::noncopyable,
   void shutdown();
   void shutdownTask();
 
+  void close();
+
   void setConnCallback(ConnCallback);
   void setMsgCallback(MsgCallback);
   void setCloseCallback(CloseCallback);
