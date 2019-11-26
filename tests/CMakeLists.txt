@@ -3,6 +3,7 @@ add_executable(net_test
         acceptor.cc
         buffer.cc
         capture.cc
+        connector.cc
         event_loop.cc
         event_loop_thread.cc
         tcp_server.cc

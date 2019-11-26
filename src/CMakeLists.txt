@@ -7,6 +7,7 @@ add_library(net_src
         acceptor.cc
         buffer.cc
         channel.cc
+	connector.cc
         event_loop.cc
         event_loop_pool.cc
         event_loop_thread.cc

@@ -35,6 +35,11 @@ inline int socket(int domain) {
       IPPROTO_TCP);
 }
 
+inline int connect(int fd, const sockaddr_storage &addr) {
+  return ::connect(
+      fd, reinterpret_cast<const sockaddr *>(&addr), sizeof(sockaddr_in6));
+}
+
 inline int open(const char *file, int flags) {
   return ::open(file, flags);
 }
