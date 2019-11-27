@@ -20,6 +20,8 @@ add_library(net_src
         tcp_server.cc
         timer.cc
         timer_queue.cc
+        http/context.cc
+        http/server.cc
         utils/logging.cc
         utils/this_thread.cc)
 target_link_libraries(net_src

@@ -33,6 +33,12 @@ class TcpServer : utils::noncopyable {
   void start();
   void setThreadNum(unsigned n);
 
+  [[nodiscard]] std::string addr() const;
+
+  void setConnCallback(ConnCallback);
+  void setMsgCallback(MsgCallback);
+  void setCloseCallback(CloseCallback);
+
  private:
   void newConnection(int fd, const NetAddr &addr);
 
@@ -41,6 +47,7 @@ class TcpServer : utils::noncopyable {
   using ConnMap = std::map<std::string, ConnPtr>;
 
   EventLoop *loop_;
+  std::unique_ptr<NetAddr> addr_;
   std::unique_ptr<EventLoopPool> pool_;
   std::unique_ptr<Acceptor> acceptor_;
   ConnCallback connCallback_;

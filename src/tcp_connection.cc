@@ -104,7 +104,7 @@ void TcpConnection::sendTask(const std::string &msg) {
     n = socket::write(channel_->fd(), msg.data(), msg.size());
     if (n < 0) {
       n = 0;
-      if (errno != EWOULDBLOCK) { SPDLOG_ERRNO(); }
+      if (errno != EWOULDBLOCK && errno != EAGAIN) { SPDLOG_ERRNO(); }
     } else if (n < msg.size()) {
       SPDLOG_TRACE("written {}, total {}", n, msg.size());
     }

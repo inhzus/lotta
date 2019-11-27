@@ -12,6 +12,7 @@
 #include <cstring>
 #include <climits>
 #include <endian.h>
+#include "spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ostr.h"
 
 namespace lotta {

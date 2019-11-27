@@ -37,7 +37,7 @@ class TcpConnection : utils::noncopyable,
       NetAddr localAddr,
       NetAddr peerAddr
   );
-  ~TcpConnection();
+  virtual ~TcpConnection();
 
   void handleRead();
   void handleWrite();

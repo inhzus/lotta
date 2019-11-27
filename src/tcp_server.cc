@@ -33,6 +33,7 @@ TcpServer::TcpServer(
     const NetAddr &addr,
     std::string name) :
     loop_(loop),
+    addr_(std::make_unique<NetAddr>(addr)),
     pool_(std::make_unique<EventLoopPool>(loop)),
     acceptor_(std::make_unique<Acceptor>(loop, addr)),
     connCallback_(defaultConnCallback),
@@ -69,7 +70,21 @@ void TcpServer::setThreadNum(unsigned n) {
   pool_->setThreadNum(n);
 }
 
-void TcpServer::newConnection(int fd, const lotta::NetAddr &addr) {
+std::string TcpServer::addr() const {
+  return addr_->addr();
+}
+
+void TcpServer::setConnCallback(ConnCallback cb) {
+  connCallback_ = std::move(cb);
+}
+void TcpServer::setMsgCallback(MsgCallback cb) {
+  msgCallback_ = std::move(cb);
+}
+void TcpServer::setCloseCallback(CloseCallback cb) {
+  closeCallback_ = std::move(cb);
+}
+
+void TcpServer::newConnection(int fd, const NetAddr &addr) {
   loop_->assertTheSameThread();
   NetAddr localAddr(socket::getSockName(fd));
   std::string connName = fmt::format(
