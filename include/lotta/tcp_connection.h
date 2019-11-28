@@ -59,6 +59,7 @@ class TcpConnection : utils::noncopyable,
   void setCloseCallback(CloseCallback);
   void setRmConnCallback(RmConnCallback);
 
+  [[nodiscard]] EventLoop *loop() { return loop_; }
   [[nodiscard]] std::string name() { return name_; }
 
  private:

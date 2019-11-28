@@ -21,6 +21,9 @@ add_library(net_src
         timer.cc
         timer_queue.cc
         http/context.cc
+        http/request.cc
+        http/response.cc
+        http/state.cc
         http/server.cc
         utils/logging.cc
         utils/this_thread.cc)

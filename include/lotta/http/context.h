@@ -23,10 +23,10 @@ class Context : utils::noncopyable {
   Context();
   ~Context();
 
-  void setRequest(const Request &request);
-  void setResponse(const Response &response);
+  void setRequest(Request &&request);
+  void setResponse(Response &&response);
 
-  [[nodiscard]] std::shared_ptr<const Request> request() const { return request_; }
+  [[nodiscard]] std::shared_ptr<Request> request() const { return request_; }
   [[nodiscard]] std::shared_ptr<Response> response() { return response_; }
 
  private:

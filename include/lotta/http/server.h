@@ -44,6 +44,8 @@ class Server {
   void run();
   void route(Method method, const std::string &path, RouteFunc f);
 
+  void setThreadNum(unsigned n);
+
  private:
   using TcpConnPtr = std::shared_ptr<TcpConnection>;
   static void connCallback(const TcpConnPtr &);

@@ -38,6 +38,8 @@ struct Slice {
   const char *data;
   size_t n;
 
+  Slice() : data(nullptr), n() {}
+
   explicit Slice(const std::string &s) :
       data(s.data()), n(static_cast<size_t>(s.size())) {}
   Slice(const char *data, size_t n) : data(data), n(n) {}
@@ -50,7 +52,22 @@ struct Slice {
     return n == 0;
   }
 
-  friend std::ostream& operator<<(std::ostream &os, const Slice &slice) {
+  [[nodiscard]] const char *begin() const {
+    return data;
+  }
+  [[nodiscard]] const char *end() const {
+    return data + n;
+  }
+
+  bool operator==(const char *str) {
+    return strlen(str) == n && strncmp(str, data, n) == 0;
+  }
+
+  bool operator==(const std::string &s) {
+    return s.size() == n && strncmp(s.data(), data, n) == 0;
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const Slice &slice) {
     os.write(slice.data, slice.n);
     return os;
   }

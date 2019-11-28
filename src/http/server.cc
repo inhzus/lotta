@@ -37,26 +37,38 @@ void Server::route(Method method, const std::string &path, RouteFunc f) {
   routes_[std::make_pair(method, path)] = std::move(f);
 }
 
+void Server::setThreadNum(unsigned n) {
+  tcpServer_->setThreadNum(n);
+}
+
 void Server::connCallback(const TcpConnPtr &) {
   SPDLOG_TRACE("server connection established");
 }
 
 void Server::msgCallback(const TcpConnPtr &conn, Buffer *buf) {
-  SPDLOG_TRACE("server received message");
-  Request request(buf);
   Context context;
-
+  context.setResponse(Response());
   try {
-    auto found = routes_.find(std::make_pair(request.method(), request.path()));
+    context.setRequest(Request(buf));
+    const std::shared_ptr<Request> request = context.request();
+    SPDLOG_INFO("{} \"{}\"", MethodMsgs[request->method()], request->path());
+    auto found = routes_.find(
+        std::make_pair(request->method(), request->path()));
     if (found == routes_.end()) {
+      SPDLOG_WARN("Not Found: {}", request->path());
       throw NotFoundException();
     }
-    context.setRequest(request);
-    context.setResponse(Response());
     found->second(&context);
   } catch (HttpException &e) {
-    SPDLOG_WARN("during ");
+    context.response()->setStatus(static_cast<Status>(e.code()));
   }
+  conn->send(context.response()->toString());
+  if (context.request() != nullptr &&
+      context.request()->hasHeader("Connection") &&
+      context.request()->getHeader("Connection") == "close") {
+    conn->shutdown();
+  }
+  conn->close();
 }
 
 void Server::closeCallback(const TcpConnPtr &) {

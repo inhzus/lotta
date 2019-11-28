@@ -52,7 +52,7 @@ TcpServer::~TcpServer() {
   SPDLOG_TRACE("tcp server {} destructing", name_);
   for (auto &pair : connections_) {
     auto conn = pair.second;
-    loop_->exec(std::bind(&TcpConnection::handleClose, conn));
+    conn->loop()->exec(std::bind(&TcpConnection::handleClose, conn));
   }
 }
 
@@ -103,7 +103,7 @@ void TcpServer::newConnection(int fd, const NetAddr &addr) {
 }
 
 void TcpServer::removeConn(const TcpServer::ConnPtr &conn) {
-  loop_->exec([this, &conn = conn]() {
+  loop_->exec([this, conn = conn]() {
     this->loop_->assertTheSameThread();
     SPDLOG_INFO("remove connection {}", conn->name());  // NOLINT
     [[maybe_unused]] auto n = this->connections_.erase(conn->name());

@@ -6,16 +6,26 @@
 #define LOTTA_RESPONSE_H
 
 #include <map>
+#include "lotta/http/state.h"
 
 namespace lotta::http {
 
 class Response {
+ public:
+  Response() :
+      status_(Status::OK),
+      version_(Version::V11),
+      headers_{
+          {"Connection", "Keep-Alive"},
+          {"Content-Length", "0"}
+      } {}
 
+  void setStatus(Status);
+  void setBody(std::string);
+  [[nodiscard]] std::string toString() const;
  private:
-  Method method_;
+  Status status_;
   Version version_;
-  std::string path_;
-  std::string query_;
   std::map<std::string, std::string> headers_;
   std::string body_;
 };

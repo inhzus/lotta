@@ -5,22 +5,38 @@
 #ifndef LOTTA_STATE_H
 #define LOTTA_STATE_H
 
+#include <map>
+
 namespace lotta::http {
 
 enum class Method {
-  Get,
-  Post,
+  OPTIONS,
+  GET,
+  HEAD,
+  POST,
   PUT,
-  DELETE
+  DELETE,
+  TRACE,
+  CONNECT,
 };
+
+extern std::map<Method, const char *> MethodMsgs;
 
 enum class Version {
   V09,
   V10,
   V11,
   V20,
-  V30
+  V30,
 };
+
+enum class Status {
+  OK = 200,
+  BadRequest = 400,
+  NotFound = 404,
+};
+
+extern std::map<Status, const char *> StatusMsgs;
 
 }
 

@@ -138,6 +138,7 @@ void EventLoop::cancel(const std::weak_ptr<Timer> &timer) {
 void EventLoop::assertTheSameThread() const {
   if (!isTheSameThread()) {
     SPDLOG_CRITICAL("not in the same thread of EventLoop");
+    assert(isTheSameThread());
   }
 }
 bool EventLoop::isTheSameThread() const {

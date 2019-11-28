@@ -10,12 +10,12 @@ namespace lotta::http {
 
 Context::Context() = default;
 
-void Context::setRequest(const Request &request) {
-  request_ = std::make_shared<Request>(request);
+void Context::setRequest(Request &&request) {
+  request_ = std::make_shared<Request>(std::move(request));
 }
 
-void Context::setResponse(const Response &response) {
-  response_ = std::make_shared<Response>(response);
+void Context::setResponse(Response &&response) {
+  response_ = std::make_shared<Response>(std::move(response));
 }
-
+Context::~Context() = default;
 }

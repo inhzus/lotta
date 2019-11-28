@@ -23,11 +23,14 @@ class Request {
   [[nodiscard]] Version version() const { return version_; }
   [[nodiscard]] std::string path() const { return path_; }
   [[nodiscard]] std::string query() const { return query_; }
+  [[nodiscard]] std::map<std::string, std::string> headers() const {
+    return headers_;
+  }
   [[nodiscard]] bool hasHeader(const std::string &key) const {
     return headers_.find(key) != headers_.end();
   }
-  [[nodiscard]] std::string getHeader(const std::string &key) {
-    return headers_[key];
+  [[nodiscard]] std::string getHeader(const std::string &key) const {
+    return headers_.find(key)->second;
   }
   [[nodiscard]] std::string body() const {
     return body_;
