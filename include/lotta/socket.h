@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "lotta/utils/logging.h"
 
 namespace lotta {
 namespace socket {
@@ -22,7 +23,8 @@ inline ssize_t write(int fd, const void *buf, size_t n) {
   return ::write(fd, buf, n);
 }
 
-inline int close(int fd) {
+inline int close(int fd, const char *f = __builtin_FUNCTION()) {
+  SPDLOG_TRACE("{} close fd: {}", f, fd);
   return ::close(fd);
 }
 

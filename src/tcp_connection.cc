@@ -34,6 +34,7 @@ TcpConnection::TcpConnection(
   socket_->setKeepAlive(true);
 }
 TcpConnection::~TcpConnection() {
+  assert(state_ == State::Disconnected);
   SPDLOG_TRACE("connection {} destructed", name_);
 }
 
@@ -130,9 +131,9 @@ void TcpConnection::shutdownTask() {
 
 void TcpConnection::close() {
   state_ = State::Disconnecting;
-  loop_->exec([this] {
-    handleClose();
-    socket::close(this->channel_->fd());
+  loop_->exec([conn = shared_from_this()] {
+    conn->handleClose();
+    conn->socket_.reset();
   });
 }
 

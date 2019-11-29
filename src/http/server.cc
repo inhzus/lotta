@@ -68,7 +68,6 @@ void Server::msgCallback(const TcpConnPtr &conn, Buffer *buf) {
       context.request()->getHeader("Connection") == "close") {
     conn->shutdown();
   }
-  conn->close();
 }
 
 void Server::closeCallback(const TcpConnPtr &) {

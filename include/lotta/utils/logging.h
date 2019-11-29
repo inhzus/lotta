@@ -21,7 +21,7 @@
         std::strerror(errno), __FUNCTION__, ## __VA_ARGS__); \
   } while (0)
 
-#define SPDLOG_ERRNO_L(LEVEL, fmt,  ...) \
+#define SPDLOG_ERRNO_L(LEVEL, fmt, ...) \
   do { \
     SPDLOG_##LEVEL("fail({}) to {}, " fmt, \
         std::strerror(errno), __FUNCTION__, ## __VA_ARGS__); \
@@ -30,6 +30,12 @@
 #define SPDLOG_ERRNO_IF(condition) \
   do { \
     if (condition) SPDLOG_ERRNO(); \
+  } while (0)
+
+#define SPDLOG_ERRNO_IF_F(condition, fmt, ...) \
+  do { \
+    if (condition) SPDLOG_ERROR("fail({}) to {}, " fmt, \
+        std::strerror(errno), __FUNCTION__, ## __VA_ARGS__); \
   } while (0)
 
 namespace lotta::utils::logging {

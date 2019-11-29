@@ -45,7 +45,7 @@ void PollPoller::updateChannel(Channel *channel) {
     channel->setIdxPoll(static_cast<int> (pollFds_.size()) - 1);
     channels_[pfd.fd] = channel;
     SPDLOG_DEBUG("init: channel fd: {}, idx: {}; pfd fd: {}",
-        channel->fd(), channel->idxPoll(), pfd.fd);
+                 channel->fd(), channel->idxPoll(), pfd.fd);
   } else {
     assert(channels_.find(channel->fd()) != channels_.end());
     assert(channels_[channel->fd()] == channel);
@@ -59,7 +59,7 @@ void PollPoller::updateChannel(Channel *channel) {
       pfd.fd = -1;
     }
     SPDLOG_DEBUG("update: channel fd: {}, idx: {}, pfd fd: {}",
-        channel->fd(), channel->idxPoll(), pfd.fd);
+                 channel->fd(), channel->idxPoll(), pfd.fd);
   }
 }
 void PollPoller::removeChannel(Channel *channel) {
@@ -75,7 +75,11 @@ void PollPoller::removeChannel(Channel *channel) {
   assert(n == 1);
   if (idx != pollFds_.size() - 1) {
     std::iter_swap(pollFds_.begin() + idx, pollFds_.end() - 1);
+    channels_[pollFds_[idx].fd]->setIdxPoll(idx);
   }
   pollFds_.pop_back();
+  for (size_t i = 0; i < pollFds_.size(); i++) {
+    assert(channels_[pollFds_[i].fd]->idxPoll() == i);
+  }
 }
 }

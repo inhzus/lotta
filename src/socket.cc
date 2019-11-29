@@ -15,7 +15,7 @@ namespace socket {
 
 int shutdownWrite(int fd) {
   int n = ::shutdown(fd, SHUT_WR);
-  SPDLOG_ERRNO_IF(n < 0);
+  SPDLOG_ERRNO_IF_F(n < 0, "fd: {}", fd);
   return n;
 }
 
@@ -23,7 +23,7 @@ sockaddr_storage getSockName(int fd) {
   sockaddr_storage addr{};
   auto len = static_cast<socklen_t >(sizeof(addr));
   int n = ::getsockname(fd, reinterpret_cast<sockaddr *>(&addr), &len);
-  SPDLOG_ERRNO_IF(n < 0);
+  SPDLOG_ERRNO_IF_F(n < 0, "fd: {}", fd);
   return addr;
 }
 
@@ -31,7 +31,7 @@ sockaddr_storage getPeerName(int fd) {
   sockaddr_storage addr{};
   auto len = static_cast<socklen_t>(sizeof(addr));
   int n = ::getpeername(fd, reinterpret_cast<sockaddr *>(&addr), &len);
-  SPDLOG_ERRNO_IF(n < 0);
+  SPDLOG_ERRNO_IF_F(n < 0, "fd: {}", fd);
   return addr;
 }
 

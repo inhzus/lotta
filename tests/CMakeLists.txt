@@ -6,6 +6,8 @@ add_executable(net_test
         connector.cc
         event_loop.cc
         event_loop_thread.cc
+	http_server.cc
+        tcp_client.cc
         tcp_server.cc
         timer_queue.cc)
 enable_testing()
