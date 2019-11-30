@@ -5,8 +5,8 @@
 #ifndef LOTTA_RESPONSE_H
 #define LOTTA_RESPONSE_H
 
-#include <map>
 #include "lotta/http/state.h"
+#include <map>
 
 namespace lotta::http {
 

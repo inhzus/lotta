@@ -16,7 +16,7 @@ namespace http {
 
 class Request {
  public:
-  Request() : method_(Method::GET), version_(Version::V11) {}
+  Request() : method_(Method::GET), version_(Version::V11), path_("/") {}
   explicit Request(Buffer *buf);
   ~Request();
 

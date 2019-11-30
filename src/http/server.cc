@@ -50,6 +50,7 @@ void Server::msgCallback(const TcpConnPtr &conn, Buffer *buf) {
   context.setResponse(Response());
   try {
     context.setRequest(Request(buf));
+//    context.setRequest(Request());
     const std::shared_ptr<Request> request = context.request();
     SPDLOG_INFO("{} \"{}\"", MethodMsgs[request->method()], request->path());
     auto found = routes_.find(

@@ -20,9 +20,13 @@ void Response::setBody(std::string body) {
 
 std::string Response::toString() const {
   std::stringstream ss;
-  ss << fmt::format("HTTP/1.1 {} {}\r\n", status_, StatusMsgs[status_]);
+
+  ss << "HTTP/1.1 " << static_cast<int>(status_) << " " <<
+     StatusMsgs[status_] << "\r\n";
+//  ss << fmt::format("HTTP/1.1 {} {}\r\n", status_, StatusMsgs[status_]);
   for (const auto &header : headers_) {
-    ss << fmt::format("{}: {}\r\n", header.first, header.second);
+    ss << header.first << ": " << header.second << "\r\n";
+//    ss << fmt::format("{}: {}\r\n", header.first, header.second);
   }
   ss << "\r\n" << body_;
   return ss.str();
