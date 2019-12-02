@@ -6,7 +6,6 @@
 #include "lotta/net_addr.h"
 #include "lotta/tcp_connection.h"
 #include "lotta/tcp_server.h"
-#include "lotta/http/context.h"
 #include "lotta/http/exceptions.h"
 #include "lotta/http/request.h"
 #include "lotta/http/response.h"
@@ -46,27 +45,23 @@ void Server::connCallback(const TcpConnPtr &) {
 }
 
 void Server::msgCallback(const TcpConnPtr &conn, Buffer *buf) {
-  Context context;
-  context.setResponse(Response());
+  Request request;
+  Response response;
   try {
-    context.setRequest(Request(buf));
-//    context.setRequest(Request());
-    const std::shared_ptr<Request> request = context.request();
-    SPDLOG_INFO("{} \"{}\"", MethodMsgs[request->method()], request->path());
+    request.readBuffer(buf);
+    SPDLOG_INFO("{} \"{}\"", MethodMsgs[request.method()], request.path());
     auto found = routes_.find(
-        std::make_pair(request->method(), request->path()));
+        std::make_pair(request.method(), request.path()));
     if (found == routes_.end()) {
-      SPDLOG_WARN("Not Found: {}", request->path());
+      SPDLOG_WARN("Not Found: {}", request.path());
       throw NotFoundException();
     }
-    found->second(&context);
+    found->second(request, response);
   } catch (HttpException &e) {
-    context.response()->setStatus(static_cast<Status>(e.code()));
+    response.setStatus(static_cast<Status>(e.code()));
   }
-  conn->send(context.response()->toString());
-  if (context.request() != nullptr &&
-      context.request()->hasHeader("Connection") &&
-      context.request()->getHeader("Connection") == "close") {
+  conn->send(response.toString());
+  if (request.getHeader("Connection") == "close") {
     conn->shutdown();
   }
 }

@@ -5,8 +5,8 @@
 #ifndef LOTTA_RESPONSE_H
 #define LOTTA_RESPONSE_H
 
+#include "lotta/http/headers.h"
 #include "lotta/http/state.h"
-#include <map>
 
 namespace lotta::http {
 
@@ -26,7 +26,7 @@ class Response {
  private:
   Status status_;
   Version version_;
-  std::map<std::string, std::string> headers_;
+  Headers headers_;
   std::string body_;
 };
 

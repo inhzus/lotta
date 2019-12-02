@@ -20,7 +20,6 @@ add_library(net_src
         tcp_server.cc
         timer.cc
         timer_queue.cc
-        http/context.cc
         http/request.cc
         http/response.cc
         http/state.cc

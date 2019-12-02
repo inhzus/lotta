@@ -9,7 +9,12 @@
 
 namespace lotta::http {
 
-Request::Request(Buffer *buf) {
+Request::Request(Buffer *buf) : Request() {
+  readBuffer(buf);
+}
+Request::~Request() = default;
+
+void Request::readBuffer(Buffer *buf) {
   const char *CRLF = "\r\n", *SP = " ";
   Slice slice;
   slice = buf->retrieveUntil(SP);  // method slice
@@ -68,13 +73,10 @@ Request::Request(Buffer *buf) {
       SPDLOG_WARN("not-formatted header: {}", slice);
       throw BadRequestException();
     }
-    headers_[std::string(slice.begin(), colon)] =
-        std::string(colon + 2, slice.end());
+    headers_.append(std::string(slice.begin(), colon),
+                    std::string(colon + 2, slice.end()));
   }
   body_ = buf->retrieve().toString();
 }
 
-Request::~Request() = default;
-
 }
-

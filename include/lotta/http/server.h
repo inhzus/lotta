@@ -32,11 +32,12 @@ class TcpConnection;
 
 namespace http {
 
-class Context;
+class Request;
+class Response;
 
 class Server {
  public:
-  using RouteFunc = std::function<void(Context *)>;
+  using RouteFunc = std::function<void(const Request &, Response &)>;
 
   Server(EventLoop *loop, const NetAddr &addr, std::string);
   ~Server();

@@ -3,7 +3,6 @@
 //
 
 #include "lotta/http/server.h"
-#include "lotta/http/context.h"
 #include "lotta/http/request.h"
 #include "lotta/http/response.h"
 #include "lotta/event_loop.h"
@@ -20,8 +19,8 @@ TEST(HttpServer, default_) {
   EventLoop loop;
   Server server(&loop, addr, "server");
   server.setThreadNum(8);
-  server.route(Method::GET, "/", [](Context *context) {
-    context->response()->setBody(context->request()->body());
+  server.route(Method::GET, "/", [](const Request &req, Response &resp) {
+    resp.setBody("Hello world!");
   });
   server.run();
   loop.loop();
