@@ -65,7 +65,7 @@ int Socket::accept(NetAddr &addr) {
       fd_, reinterpret_cast<sockaddr *>(&addr.addr_), &n,
       SOCK_NONBLOCK | SOCK_CLOEXEC);
   if (fd < 0) {
-    switch (int err = errno) {
+    switch (errno) {
       case EAGAIN:
       case ENETDOWN:
       case EPROTO:

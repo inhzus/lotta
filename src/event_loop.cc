@@ -99,7 +99,7 @@ void EventLoop::pushQueue(EventLoop::Function f) {
     funcQueue_.push_back(std::move(f));
   }
   // iff in the same thread & not doing funcQueue (aka activeChannel callbacks)
-  if (!isTheSameThread() | doingFuncQueue_) {
+  if ((!isTheSameThread()) | doingFuncQueue_) {
     wakeup();
   }
 }

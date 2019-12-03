@@ -18,7 +18,7 @@ TEST(HttpServer, default_) {
   NetAddr addr(8001);
   EventLoop loop;
   Server server(&loop, addr, "server");
-  server.setThreadNum(8);
+  server.setThreadNum(1);
   server.route(Method::GET, "/", [](const Request &req, Response &resp) {
     resp.setBody("Hello world!");
   });

@@ -32,9 +32,6 @@ class Request {
   [[nodiscard]] std::string getHeader(const std::string &key) const {
     return headers_.get(key);
   }
-  void setHeader(const std::string &key, const std::string &val) {
-    headers_.set(key, val);
-  }
   [[nodiscard]] std::string body() const {
     return body_;
   }

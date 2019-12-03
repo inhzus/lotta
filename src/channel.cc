@@ -18,23 +18,20 @@ const unsigned kWritePollEvent = static_cast<unsigned>(POLLOUT);
 const unsigned kErrorPollEvent = static_cast<unsigned>(POLLERR)
     | static_cast<unsigned>(POLLNVAL);
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "hicpp-signed-bitwise"
 std::string innerEventsString(unsigned e) {
   std::stringstream ss;
-  if (e & POLLIN) { ss << "IN "; }
-  if (e & POLLPRI) { ss << "PRI "; }
-  if (e & POLLRDHUP) { ss << "RDHUP "; }
-  if (e & POLLOUT) { ss << "OUT "; }
-  if (e & POLLERR) { ss << "ERR "; }
-  if (e & POLLNVAL) { ss << "NVAL "; }
+  if (e & POLLIN) { ss << "IN "; } // NOLINT(hicpp-signed-bitwise)
+  if (e & POLLPRI) { ss << "PRI "; } // NOLINT(hicpp-signed-bitwise)
+  if (e & POLLRDHUP) { ss << "RDHUP "; } // NOLINT(hicpp-signed-bitwise)
+  if (e & POLLOUT) { ss << "OUT "; } // NOLINT(hicpp-signed-bitwise)
+  if (e & POLLERR) { ss << "ERR "; } // NOLINT(hicpp-signed-bitwise)
+  if (e & POLLNVAL) { ss << "NVAL "; } // NOLINT(hicpp-signed-bitwise)
   std::string ret(ss.str());
   if (ret.empty()) {
     ret = "NULL";
   }
   return ret;
 }
-#pragma clang diagnostic pop
 
 Channel::Channel(EventLoop *loop, int fd)
     : loop_(loop),

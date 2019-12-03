@@ -24,8 +24,8 @@ class EventLoopThread {
 
   EventLoop *loop_;
   std::thread thread_;
-  std::condition_variable cond_;
   std::mutex mtx_;
+  std::condition_variable cond_;
 };
 
 }

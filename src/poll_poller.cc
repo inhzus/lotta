@@ -73,7 +73,7 @@ void PollPoller::removeChannel(Channel *channel) {
   assert(pollFds_[idx].fd == -1 && pollFds_[idx].events == channel->events());
   [[maybe_unused]] size_t n = channels_.erase(channel->fd());
   assert(n == 1);
-  if (idx != pollFds_.size() - 1) {
+  if (static_cast<decltype(pollFds_.size())>(idx) != pollFds_.size() - 1) {
     std::iter_swap(pollFds_.begin() + idx, pollFds_.end() - 1);
     channels_[pollFds_[idx].fd]->setIdxPoll(idx);
   }

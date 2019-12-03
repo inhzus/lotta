@@ -100,7 +100,7 @@ void TcpConnection::send(const std::string &msg) {
 }
 void TcpConnection::sendTask(const std::string &msg) {
   loop_->assertTheSameThread();
-  ssize_t n{};
+  std::string::size_type n{};
   if (!channel_->isWriting() && outBuf_.readable() == 0) {
     n = socket::write(channel_->fd(), msg.data(), msg.size());
     if (n < 0) {

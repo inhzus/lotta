@@ -12,15 +12,14 @@ namespace lotta {
 
 int createTimerFd() {
   int fd = ::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
-  if (fd < 0) {
-    SPDLOG_CRITICAL("timer fd fails to initialize");
-  }
+  SPDLOG_ERRNO_IF(fd < 0);
   return fd;
 }
 
 void readTimerFd(int fd) {
   int64_t tmp;
   ssize_t n = socket::read(fd, &tmp, sizeof(tmp));
+  SPDLOG_ERRNO_IF(n < 0);
   SPDLOG_TRACE("read timer fd {} events", tmp);
 }
 
