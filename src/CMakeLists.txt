@@ -3,7 +3,7 @@ if (NOT TARGET spdlog)
     find_package(spdlog REQUIRED)
 endif ()
 
-add_library(net_src
+add_library(lotta_lib
         acceptor.cc
         buffer.cc
         channel.cc
@@ -26,5 +26,5 @@ add_library(net_src
         http/server.cc
         utils/logging.cc
         utils/this_thread.cc)
-target_link_libraries(net_src
+target_link_libraries(lotta_lib
         PRIVATE spdlog::spdlog)

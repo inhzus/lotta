@@ -70,7 +70,8 @@ void PollPoller::removeChannel(Channel *channel) {
   assert(channel->isEmptyEvent());
   int idx = channel->idxPoll();
   assert(0 <= idx && idx < static_cast<int>(pollFds_.size()));
-  assert(pollFds_[idx].fd == -1 && pollFds_[idx].events == channel->events());
+  assert(pollFds_[idx].fd == -1);
+  assert(static_cast<unsigned>(pollFds_[idx].events) == channel->events());
   [[maybe_unused]] size_t n = channels_.erase(channel->fd());
   assert(n == 1);
   if (static_cast<decltype(pollFds_.size())>(idx) != pollFds_.size() - 1) {
@@ -78,7 +79,7 @@ void PollPoller::removeChannel(Channel *channel) {
     channels_[pollFds_[idx].fd]->setIdxPoll(idx);
   }
   pollFds_.pop_back();
-  for (size_t i = 0; i < pollFds_.size(); i++) {
+  for (int i = 0; i < static_cast<int>(pollFds_.size()); i++) {
     assert(channels_[pollFds_[i].fd]->idxPoll() == i);
   }
 }

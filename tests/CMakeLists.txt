@@ -1,4 +1,4 @@
-add_executable(net_test
+add_executable(lotta_test
         main.cc
         acceptor.cc
         buffer.cc
@@ -12,4 +12,4 @@ add_executable(net_test
         timer_queue.cc)
 enable_testing()
 find_package(GTest REQUIRED)
-target_link_libraries(net_test GTest::GTest GTest::Main net_src)
+target_link_libraries(lotta_test GTest::GTest GTest::Main lotta_lib)

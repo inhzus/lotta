@@ -1,0 +1,2 @@
+add_executable(lotta_http_server http_server.cc)
+target_link_libraries(lotta_http_server lotta_lib)
